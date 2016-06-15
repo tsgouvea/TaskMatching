@@ -30,6 +30,7 @@ BpodSystem.Data.Custom.Wait = TaskParameters.GUI.waitMin;
 BpodSystem.Data.Custom.OutcomeRecord = nan;
 BpodSystem.Data.Custom.TrialValid = true;
 BpodSystem.Data.Custom.BrokeFix = false;
+BpodSystem.Data.Custom.BrokeFixTime = NaN;
 BpodSystem.Data.Custom.BlockNumber = 1;
 BpodSystem.Data.Custom.LeftHi = rand>.5;
 BpodSystem.Data.Custom.BlockLen = drawBlockLen(TaskParameters);
@@ -176,12 +177,14 @@ end
 if BpodSystem.Data.Custom.OutcomeRecord(end)==12
     BpodSystem.Data.Custom.TrialValid(end) = false;
     BpodSystem.Data.Custom.BrokeFix(end) = true;
+    BpodSystem.Data.Custom.BrokeFixTime(end) = diff(BpodSystem.Data.RawEvents.Trial{end}.States.stay_Cin);
 end
 BpodSystem.Data.Custom.OutcomeRecord(end+1) = nan;
 BpodSystem.Data.Custom.ChoiceLeft(end+1) = NaN;
 BpodSystem.Data.Custom.Rewarded(end+1) = NaN;
 BpodSystem.Data.Custom.TrialValid(end+1) = true;
 BpodSystem.Data.Custom.BrokeFix(end+1) = false;
+BpodSystem.Data.Custom.BrokeFixTime(end+1) = NaN;
 
 %% Waiting (fixation) time
 if BpodSystem.Data.Custom.TrialValid(end-1)

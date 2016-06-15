@@ -84,16 +84,15 @@ switch Action
         hold(AxesHandles.HandleOutcome, 'on');
         %% Waiting times
         hold(AxesHandles.HandleWait,'on')
-        set(AxesHandles.HandleWait,'xlabel','Time (s)','ylabel','nTrials','title','Waiting time');
-%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.BrokeFix));
-%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix.EdgeColor = 'none';
-%         hold on
-%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.TrialValid));
-%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess.EdgeColor = 'none';
-%         hold off
-%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = line([0 .5],[0 0], 'LineStyle','-','Color','r');
-%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess = line([0 .5],[0 0], 'LineStyle','-','Color','g');
+        AxesHandles.HandleWait.XLabel.String = 'Time (s)';
+        AxesHandles.HandleWait.YLabel.String = 'nTrials';
+        AxesHandles.HandleWait.Title.String = 'Waiting time';
         %% Trial rate
+        hold(AxesHandles.HandleTrialRate,'on')
+        BpodSystem.GUIHandles.OutcomePlot.TrialRate = line(AxesHandles.HandleTrialRate,[0],[0], 'LineStyle','-','Color','k');
+        AxesHandles.HandleTrialRate.XLabel.String = 'Time (s)'; % FIGURE OUT UNIT
+        AxesHandles.HandleTrialRate.YLabel.String = 'nTrials';
+        AxesHandles.HandleTrialRate.Title.String = 'Trial rate';
     case 'update'
         %% Outcome
         CurrentTrial = varargin{1};
@@ -149,8 +148,11 @@ switch Action
         cla(AxesHandles.HandleWait)
         BpodSystem.GUIHandles.OutcomePlot.HistSuccess = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.TrialValid));
         BpodSystem.GUIHandles.OutcomePlot.HistSuccess.EdgeColor = 'none';
-        BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.BrokeFix));
+        BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.BrokeFixTime(BpodSystem.Data.Custom.BrokeFix));
         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix.EdgeColor = 'none';
+        %% Trial rate
+        BpodSystem.GUIHandles.OutcomePlot.TrialRate.XData = (BpodSystem.Data.TrialStartTimestamp-min(BpodSystem.Data.TrialStartTimestamp));
+        BpodSystem.GUIHandles.OutcomePlot.TrialRate.YData = 1:numel(BpodSystem.Data.Custom.ChoiceLeft)-1;
 end
 
 end
