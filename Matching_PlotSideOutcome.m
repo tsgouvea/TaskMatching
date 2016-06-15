@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %}
 % function OutcomePlot(AxesHandle,TrialTypeSides, OutcomeRecord, CurrentTrial)
-function Matching_PlotSideOutcome(AxesHandle, Action, varargin)
+function Matching_PlotSideOutcome(AxesHandles, Action, varargin)
 %%
 % Plug in to Plot reward side and trial outcome.
 % For non-sided trial types, use the TrialTypeOutcomePlot plugin.
@@ -55,59 +55,69 @@ global BpodSystem
 
 switch Action
     case 'init'
-        %initialize pokes plot
-        Baited = varargin{1};
-        
+        %% Outcome
         nTrialsToShow = 90; %default number of trials to display
         
-        if nargin > 3 %custom number of trials
+        if nargin >= 3 %custom number of trials
             nTrialsToShow =varargin{3};
         end
-        axes(AxesHandle);
+        axes(AxesHandles.HandleOutcome);
         %         Xdata = 1:numel(SideList); Ydata = SideList(Xdata);
         %plot in specified axes
-        BpodSystem.GUIHandles.BaitL = line(-1,1,'LineStyle','none','Marker','o','MarkerEdge','y',...
+        BpodSystem.GUIHandles.OutcomePlot.BaitL = line(-1,1,'LineStyle','none','Marker','o','MarkerEdge','g',...
             'MarkerFace','none', 'MarkerSize',8);%
-        BpodSystem.GUIHandles.BaitR = line(-1,0,'LineStyle','none','Marker','o','MarkerEdge','y',...
+        BpodSystem.GUIHandles.OutcomePlot.BaitR = line(-1,0,'LineStyle','none','Marker','o','MarkerEdge','g',...
             'MarkerFace','none', 'MarkerSize',8);
         
-        BpodSystem.GUIHandles.CurrentTrialCircle = line(1,0.5, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
-        BpodSystem.GUIHandles.CurrentTrialCross = line(1,0.5, 'LineStyle','none','Marker','+','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
-        BpodSystem.GUIHandles.RewardedL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
-        BpodSystem.GUIHandles.RewardedR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
-        BpodSystem.GUIHandles.UnrewardedL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','r','MarkerFace','r', 'MarkerSize',6);
-        BpodSystem.GUIHandles.UnrewardedR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','r','MarkerFace','r', 'MarkerSize',6);
-        BpodSystem.GUIHandles.NoResponseL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
-        BpodSystem.GUIHandles.NoResponseR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
-        BpodSystem.GUIHandles.BrokeFix = line(-1,0.5, 'LineStyle','none','Marker','d','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
-        BpodSystem.GUIHandles.LogOdds = line([0 1],[0 1], 'LineStyle','--','Color','k');
-        set(AxesHandle,'TickDir', 'out','XLim',[0, nTrialsToShow],'YLim', [-1, 2], 'YTick', [0 1],'YTickLabel', {'Right','Left'}, 'FontSize', 16);
-        xlabel(AxesHandle, 'Trial#', 'FontSize', 18);
-        hold(AxesHandle, 'on');
-        
+        BpodSystem.GUIHandles.OutcomePlot.CurrentTrialCircle = line(1,0.5, 'LineStyle','none','Marker','o','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.CurrentTrialCross = line(1,0.5, 'LineStyle','none','Marker','+','MarkerEdge','k','MarkerFace',[1 1 1], 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.RewardedL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.RewardedR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','g','MarkerFace','g', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.UnrewardedL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','r','MarkerFace','r', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.UnrewardedR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','r','MarkerFace','r', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.NoResponseL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.NoResponseR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.BrokeFix = line(-1,0.5, 'LineStyle','none','Marker','d','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
+        BpodSystem.GUIHandles.OutcomePlot.LogOdds = line([0 1],[0 1], 'LineStyle','--','Color','k');
+        set(AxesHandles.HandleOutcome,'TickDir', 'out','XLim',[0, nTrialsToShow],'YLim', [-1, 2], 'YTick', [0 1],'YTickLabel', {'Right','Left'}, 'FontSize', 16);
+        xlabel(AxesHandles.HandleOutcome, 'Trial#', 'FontSize', 18);
+        hold(AxesHandles.HandleOutcome, 'on');
+        %% Waiting times
+        hold(AxesHandles.HandleWait,'on')
+        set(AxesHandles.HandleWait,'xlabel','Time (s)','ylabel','nTrials','title','Waiting time');
+%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.BrokeFix));
+%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix.EdgeColor = 'none';
+%         hold on
+%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.TrialValid));
+%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess.EdgeColor = 'none';
+%         hold off
+%         BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = line([0 .5],[0 0], 'LineStyle','-','Color','r');
+%         BpodSystem.GUIHandles.OutcomePlot.HistSuccess = line([0 .5],[0 0], 'LineStyle','-','Color','g');
+        %% Trial rate
     case 'update'
+        %% Outcome
         CurrentTrial = varargin{1};
         Baited = BpodSystem.Data.Custom.Baited;
         OutcomeRecord = BpodSystem.Data.Custom.OutcomeRecord;
         
         % recompute xlim
-        [mn, mx] = rescaleX(AxesHandle,CurrentTrial,nTrialsToShow);
+        [mn, mx] = rescaleX(AxesHandles.HandleOutcome,CurrentTrial,nTrialsToShow);
         
         %axes(AxesHandle); %cla;
         %plot future trials
         if any(Baited.Left)
-            set(BpodSystem.GUIHandles.BaitL,'xdata',find(Baited.Left),'ydata',ones(1,sum(Baited.Left)));
+            set(BpodSystem.GUIHandles.OutcomePlot.BaitL,'xdata',find(Baited.Left),'ydata',ones(1,sum(Baited.Left)));
         end
         if any(Baited.Right)
-            set(BpodSystem.GUIHandles.BaitR,'xdata',find(Baited.Right),'ydata',zeros(1,sum(Baited.Right)));
+            set(BpodSystem.GUIHandles.OutcomePlot.BaitR,'xdata',find(Baited.Right),'ydata',zeros(1,sum(Baited.Right)));
         end
         
         %         FutureTrialsIndx = CurrentTrial:mx;
         %         Xdata = FutureTrialsIndx; Ydata = SideList(Xdata);
-        %         set(BpodSystem.GUIHandles.FutureTrialLine, 'xdata', [Xdata,Xdata], 'ydata', [Ydata,Ydata]);
+        %         set(BpodSystem.GUIHandles.OutcomePlot.FutureTrialLine, 'xdata', [Xdata,Xdata], 'ydata', [Ydata,Ydata]);
         %Plot current trial
-        set(BpodSystem.GUIHandles.CurrentTrialCircle, 'xdata', CurrentTrial, 'ydata', .5);
-        set(BpodSystem.GUIHandles.CurrentTrialCross, 'xdata', CurrentTrial, 'ydata', .5);
+        set(BpodSystem.GUIHandles.OutcomePlot.CurrentTrialCircle, 'xdata', CurrentTrial, 'ydata', .5);
+        set(BpodSystem.GUIHandles.OutcomePlot.CurrentTrialCross, 'xdata', CurrentTrial, 'ydata', .5);
         
         %Plot past trials
         if ~isempty(OutcomeRecord)
@@ -115,26 +125,32 @@ switch Action
             %Plot Rewarded Left
             ndxRwdL = OutcomeRecord(indxToPlot) == 4;
             Xdata = indxToPlot(ndxRwdL); Ydata = ones(1,sum(ndxRwdL));
-            set(BpodSystem.GUIHandles.RewardedL, 'xdata', Xdata, 'ydata', Ydata);
+            set(BpodSystem.GUIHandles.OutcomePlot.RewardedL, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Rewarded Right
             ndxRwdR = OutcomeRecord(indxToPlot) == 5;
             Xdata = indxToPlot(ndxRwdR); Ydata = zeros(1,sum(ndxRwdR));
-            set(BpodSystem.GUIHandles.RewardedR, 'xdata', Xdata, 'ydata', Ydata);
+            set(BpodSystem.GUIHandles.OutcomePlot.RewardedR, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Unrewarded Left
             ndxUrdL = OutcomeRecord(indxToPlot) == 6;
             Xdata = indxToPlot(ndxUrdL); Ydata = ones(1,sum(ndxUrdL));
-            set(BpodSystem.GUIHandles.UnrewardedL, 'xdata', Xdata, 'ydata', Ydata);
+            set(BpodSystem.GUIHandles.OutcomePlot.UnrewardedL, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Unrewarded Right
             ndxUrdR = OutcomeRecord(indxToPlot) == 7;
             Xdata = indxToPlot(ndxUrdR); Ydata = zeros(1,sum(ndxUrdR));
-            set(BpodSystem.GUIHandles.UnrewardedR, 'xdata', Xdata, 'ydata', Ydata);
+            set(BpodSystem.GUIHandles.OutcomePlot.UnrewardedR, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Broken Fixation
             ndxBroke = OutcomeRecord(indxToPlot) == 12;
             Xdata = indxToPlot(ndxBroke); Ydata = ones(1,sum(ndxBroke))*.5;
-            set(BpodSystem.GUIHandles.BrokeFix, 'xdata', Xdata, 'ydata', Ydata);
+            set(BpodSystem.GUIHandles.OutcomePlot.BrokeFix, 'xdata', Xdata, 'ydata', Ydata);
             %Plot LogOdds of Reward
-            set(BpodSystem.GUIHandles.LogOdds, 'xdata', indxToPlot, 'ydata', .5+log10(BpodSystem.Data.Custom.CumpL(1:end-1)./BpodSystem.Data.Custom.CumpR(1:end-1)));
+            set(BpodSystem.GUIHandles.OutcomePlot.LogOdds, 'xdata', indxToPlot, 'ydata', .5+log10(BpodSystem.Data.Custom.CumpL(1:end-1)./BpodSystem.Data.Custom.CumpR(1:end-1)));
         end
+        %% Waiting times
+        cla(AxesHandles.HandleWait)
+        BpodSystem.GUIHandles.OutcomePlot.HistSuccess = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.TrialValid));
+        BpodSystem.GUIHandles.OutcomePlot.HistSuccess.EdgeColor = 'none';
+        BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix = histogram(AxesHandles.HandleWait,BpodSystem.Data.Custom.Wait(BpodSystem.Data.Custom.BrokeFix));
+        BpodSystem.GUIHandles.OutcomePlot.HistBrokeFix.EdgeColor = 'none';
 end
 
 end

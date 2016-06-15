@@ -29,6 +29,7 @@ BpodSystem.Data.Custom.Baited.Right = true;
 BpodSystem.Data.Custom.Wait = TaskParameters.GUI.waitMin;
 BpodSystem.Data.Custom.OutcomeRecord = nan;
 BpodSystem.Data.Custom.TrialValid = true;
+BpodSystem.Data.Custom.BrokeFix = false;
 BpodSystem.Data.Custom.BlockNumber = 1;
 BpodSystem.Data.Custom.LeftHi = rand>.5;
 BpodSystem.Data.Custom.BlockLen = drawBlockLen(TaskParameters);
@@ -44,10 +45,12 @@ end
 BpodSystem.Data.Custom = orderfields(BpodSystem.Data.Custom);
 
 %% Initialize plots
-BpodSystem.ProtocolFigures.SideOutcomePlotFig = figure('Position', [200 200 1000 200],'name','Outcome plot','numbertitle','off', 'MenuBar', 'none', 'Resize', 'off');
-BpodSystem.GUIHandles.SideOutcomePlot = axes('Position', [.075 .3 .89 .6]);
-Matching_PlotSideOutcome(BpodSystem.GUIHandles.SideOutcomePlot,'init',BpodSystem.Data.Custom.Baited);
-BpodNotebook('init');
+BpodSystem.ProtocolFigures.OutcomePlotFig = figure('Position', [200 200 1000 400],'name','Outcome plot','numbertitle','off', 'MenuBar', 'none', 'Resize', 'off');
+BpodSystem.GUIHandles.OutcomePlot.HandleOutcome = axes('Position', [.075 .15 .89 .3]);
+BpodSystem.GUIHandles.OutcomePlot.HandleWait = axes('Position', [.075 .6 .12 .3]);
+BpodSystem.GUIHandles.OutcomePlot.HandleTrialRate = axes('Position', [2*.075+.12 .6 .12 .3]);
+Matching_PlotSideOutcome(BpodSystem.GUIHandles.OutcomePlot,'init');
+% BpodNotebook('init');
 
 %% Main loop
 RunSession = true;
@@ -70,7 +73,7 @@ while RunSession
     
     updateCustomDataFields(TaskParameters)
     iTrial = iTrial + 1;
-    Matching_PlotSideOutcome(BpodSystem.GUIHandles.SideOutcomePlot,'update',iTrial);
+    Matching_PlotSideOutcome(BpodSystem.GUIHandles.OutcomePlot,'update',iTrial);
 end
 end
 
@@ -172,11 +175,13 @@ elseif BpodSystem.Data.Custom.OutcomeRecord(end) == 6 || BpodSystem.Data.Custom.
 end
 if BpodSystem.Data.Custom.OutcomeRecord(end)==12
     BpodSystem.Data.Custom.TrialValid(end) = false;
+    BpodSystem.Data.Custom.BrokeFix(end) = true;
 end
 BpodSystem.Data.Custom.OutcomeRecord(end+1) = nan;
 BpodSystem.Data.Custom.ChoiceLeft(end+1) = NaN;
 BpodSystem.Data.Custom.Rewarded(end+1) = NaN;
 BpodSystem.Data.Custom.TrialValid(end+1) = true;
+BpodSystem.Data.Custom.BrokeFix(end+1) = false;
 
 %% Waiting (fixation) time
 if BpodSystem.Data.Custom.TrialValid(end-1)
