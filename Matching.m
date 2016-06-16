@@ -5,19 +5,19 @@ global BpodSystem
 %% Task parameters
 TaskParameters = BpodSystem.ProtocolSettings;
 if isempty(fieldnames(TaskParameters))
-    TaskParameters.GUI.pHi =  40; % 0-100% Higher reward probability
-    TaskParameters.GUI.pLo =  10; % 0-100% Lower reward probability
-    TaskParameters.GUI.blockLenMin = 50;
-    TaskParameters.GUI.blockLenMax = 150;
-    TaskParameters.GUI.iti = 0; % (s)
-    TaskParameters.GUI.rewardAmount = 3;
+    TaskParameters.GUI.pHi =  100; % 0-100% Higher reward probability
+    TaskParameters.GUI.pLo =  100; % 0-100% Lower reward probability
+    TaskParameters.GUI.blockLenMin = 150;
+    TaskParameters.GUI.blockLenMax = 350;
+    TaskParameters.GUI.iti = 2; % (s)
+    TaskParameters.GUI.rewardAmount = 30;
     %TaskParameters.GUI.ChoiceDeadLine = 5;
-    TaskParameters.GUI.timeOut = 5; % (s)
+    TaskParameters.GUI.timeOut = 10; % (s)
     %TaskParameters.GUI.rwdDelay = 0; % (s)
-    TaskParameters.GUI.waitTarget = 3;% Time (s) the animal is required to wait at the center poke
-    TaskParameters.GUI.waitMin = .005;
-    TaskParameters.GUI.waitIncr = .020;
-    TaskParameters.GUI.waitDecr = .010;
+    TaskParameters.GUI.waitTarget = 1;% Time (s) the animal is required to wait at the center poke
+    TaskParameters.GUI.waitMin = .05;
+    TaskParameters.GUI.waitIncr = .003;
+    TaskParameters.GUI.waitDecr = .0035;
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
 BpodParameterGUI('init', TaskParameters);
@@ -245,7 +245,17 @@ end
 
 function BlockLen = drawBlockLen(TaskParameters)
 BlockLen = 0;
+if TaskParameters.GUI.blockLenMax < TaskParameters.GUI.blockLenMin
+    error('Bpod:Matching:blockLenMinMax','Error choosing block length: minimum is greater than maximum. Set different values and try again.')
+end
+iDraw = 0;
 while BlockLen < TaskParameters.GUI.blockLenMin || BlockLen > TaskParameters.GUI.blockLenMax
     BlockLen = ceil(exprnd(sqrt(TaskParameters.GUI.blockLenMin*TaskParameters.GUI.blockLenMax)));
+    iDraw = iDraw+1;
+    if iDraw > 1000
+        BlockLen = ceil(random('unif',TaskParameters.GUI.blockLenMin,TaskParameters.GUI.blockLenMax));
+        warning('Bpod:Matching:blockLenDraw',['Drawing block length from exponential distribution is taking too long.'...
+            'Using uniform distribution instead. If exponential is important for you, set reasonable minimum and maximum values and try again.'])
+    end
 end
 end
