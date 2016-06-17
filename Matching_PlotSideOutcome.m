@@ -78,7 +78,7 @@ switch Action
         BpodSystem.GUIHandles.OutcomePlot.NoResponseL = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
         BpodSystem.GUIHandles.OutcomePlot.NoResponseR = line(-1,0, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
         BpodSystem.GUIHandles.OutcomePlot.BrokeFix = line(-1,0.5, 'LineStyle','none','Marker','d','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
-        BpodSystem.GUIHandles.OutcomePlot.LogOdds = line([0 1],[0 1], 'LineStyle','--','Color','k');
+        BpodSystem.GUIHandles.OutcomePlot.LogOdds = line([0 1],[0 1], 'LineStyle','-','Color','k');
         set(AxesHandles.HandleOutcome,'TickDir', 'out','XLim',[0, nTrialsToShow],'YLim', [-1, 2], 'YTick', [0 1],'YTickLabel', {'Right','Left'}, 'FontSize', 16);
         xlabel(AxesHandles.HandleOutcome, 'Trial#', 'FontSize', 18);
         hold(AxesHandles.HandleOutcome, 'on');
@@ -122,23 +122,23 @@ switch Action
         if ~isempty(OutcomeRecord)
             indxToPlot = mn:CurrentTrial-1;
             %Plot Rewarded Left
-            ndxRwdL = OutcomeRecord(indxToPlot) == 4;
+            ndxRwdL = OutcomeRecord(indxToPlot) == find(strcmp('rewarded_Lin',BpodSystem.Data.RawData.OriginalStateNamesByNumber{end}));
             Xdata = indxToPlot(ndxRwdL); Ydata = ones(1,sum(ndxRwdL));
             set(BpodSystem.GUIHandles.OutcomePlot.RewardedL, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Rewarded Right
-            ndxRwdR = OutcomeRecord(indxToPlot) == 5;
+            ndxRwdR = OutcomeRecord(indxToPlot) == find(strcmp('rewarded_Rin',BpodSystem.Data.RawData.OriginalStateNamesByNumber{end}));
             Xdata = indxToPlot(ndxRwdR); Ydata = zeros(1,sum(ndxRwdR));
             set(BpodSystem.GUIHandles.OutcomePlot.RewardedR, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Unrewarded Left
-            ndxUrdL = OutcomeRecord(indxToPlot) == 6;
+            ndxUrdL = OutcomeRecord(indxToPlot) == find(strcmp('unrewarded_Lin',BpodSystem.Data.RawData.OriginalStateNamesByNumber{end}));
             Xdata = indxToPlot(ndxUrdL); Ydata = ones(1,sum(ndxUrdL));
             set(BpodSystem.GUIHandles.OutcomePlot.UnrewardedL, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Unrewarded Right
-            ndxUrdR = OutcomeRecord(indxToPlot) == 7;
+            ndxUrdR = OutcomeRecord(indxToPlot) == find(strcmp('unrewarded_Rin',BpodSystem.Data.RawData.OriginalStateNamesByNumber{end}));
             Xdata = indxToPlot(ndxUrdR); Ydata = zeros(1,sum(ndxUrdR));
             set(BpodSystem.GUIHandles.OutcomePlot.UnrewardedR, 'xdata', Xdata, 'ydata', Ydata);
             %Plot Broken Fixation
-            ndxBroke = OutcomeRecord(indxToPlot) == 12;
+            ndxBroke = OutcomeRecord(indxToPlot) == find(strcmp('broke_fixation',BpodSystem.Data.RawData.OriginalStateNamesByNumber{end}));
             Xdata = indxToPlot(ndxBroke); Ydata = ones(1,sum(ndxBroke))*.5;
             set(BpodSystem.GUIHandles.OutcomePlot.BrokeFix, 'xdata', Xdata, 'ydata', Ydata);
             %Plot LogOdds of Reward
