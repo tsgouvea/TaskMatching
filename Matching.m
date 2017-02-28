@@ -5,19 +5,36 @@ global BpodSystem
 %% Task parameters
 TaskParameters = BpodSystem.ProtocolSettings;
 if isempty(fieldnames(TaskParameters))
-    TaskParameters.GUI.pHi =  100; % 0-100% Higher reward probability
-    TaskParameters.GUI.pLo =  100; % 0-100% Lower reward probability
-    TaskParameters.GUI.blockLenMin = 150;
-    TaskParameters.GUI.blockLenMax = 350;
-    TaskParameters.GUI.iti = 2; % (s)
+    % Center Port ("stimulus sampling")
+    TaskParameters.GUI.MinSampleTime = 0;
+    TaskParameters.GUI.MaxSampleTime = 1;
+    TaskParameters.GUI.AutoIncrSample = true;
+    TaskParameters.GUIMeta.AutoIncrSample.Style = 'checkbox';
+    TaskParameters.GUI.EarlyCoutPenalty = 5;
+    TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
+    TaskParameters.GUIMeta.SampleTime.Style = 'text';
+    TaskParameters.GUIPanels.CenterPort = {'EarlyCoutPenalty','AutoIncrSample','MinSampleTime','MaxSampleTime','SampleTime'};
+    % General
+    TaskParameters.GUI.Ports_LMR = '123';
+    TaskParameters.GUI.ITI = 1; % (s)
+    TaskParameters.GUI.VI = false; % random ITI
+    TaskParameters.GUIMeta.VI.Style = 'checkbox';
+    TaskParameters.GUI.ChoiceDeadline = 10;
+    TaskParameters.GUI.MinCutoff = 50; % New waiting time as percentile of empirical distribution
+    TaskParameters.GUIPanels.General = {'Ports_LMR','FI','VI','ChoiceDeadline','MinCutoff'};
+    % Side Ports ("waiting for feedback")
+    TaskParameters.GUI.MinFeedbackTime = 0;
+    TaskParameters.GUI.MaxFeedbackTime = 1;
+    TaskParameters.GUI.EarlySoutPenalty = 1;
+    TaskParameters.GUI.AutoIncrFeedback = true;
+    TaskParameters.GUIMeta.AutoIncrFeedback.Style = 'checkbox';
+    TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
+    TaskParameters.GUIMeta.FeedbackTime.Style = 'text';
+    TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','AutoIncrFeedback','MinFeedbackTime','MaxFeedbackTime','FeedbackTime'};   
+    % Reward
     TaskParameters.GUI.rewardAmount = 30;
-    %TaskParameters.GUI.ChoiceDeadLine = 5;
-    TaskParameters.GUI.timeOut = 10; % (s)
-    %TaskParameters.GUI.rwdDelay = 0; % (s)
-    TaskParameters.GUI.waitTarget = 1;% Time (s) the animal is required to wait at the center poke
-    TaskParameters.GUI.waitMin = .05;
-    TaskParameters.GUI.waitIncr = .003;
-    TaskParameters.GUI.waitDecr = .0035;
+    
+    TaskParameters.GUIPanels.Reward = {'rewardAmount','Deplete','DepleteRate','Jackpot','JackpotMin','JackpotTime'};
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
 BpodParameterGUI('init', TaskParameters);
