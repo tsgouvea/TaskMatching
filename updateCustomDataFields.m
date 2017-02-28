@@ -22,6 +22,7 @@ end
 BpodSystem.Data.Custom.EarlyCout(iTrial) = any(strcmp('EarlyCout',statesThisTrial));
 BpodSystem.Data.Custom.EarlySout(iTrial) = any(strcmp('EarlyRout',statesThisTrial)) || any(strcmp('EarlyLout',statesThisTrial));
 BpodSystem.Data.Custom.Rewarded(iTrial) = any(strncmp('water_',statesThisTrial,6));
+BpodSystem.Data.Custom.RewardMagnitude(iTrial,1:2) = TaskParameters.GUI.rewardAmount;
 
 %% initialize next trial values
 BpodSystem.Data.Custom.ChoiceLeft(iTrial+1) = NaN;
@@ -35,11 +36,11 @@ BpodSystem.Data.Custom.FeedbackTime(iTrial+1) = NaN;
 nTrialsThisBlock = sum(BpodSystem.Data.Custom.BlockNumber == BpodSystem.Data.Custom.BlockNumber(iTrial));
 if nTrialsThisBlock >= TaskParameters.GUI.blockLenMax
     % If current block len exceeds new max block size, will transition
-    BpodSystem.Data.Custom.BlockLen(iTrial) = nTrialsThisBlock;
+    BpodSystem.Data.Custom.BlockLen(end) = nTrialsThisBlock;
 end
-if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(iTrial)
+if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(end)
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial)+1;
-    BpodSystem.Data.Custom.BlockLen(iTrial+1) = drawBlockLen(TaskParameters);
+    BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen(TaskParameters);
     BpodSystem.Data.Custom.LeftHi(iTrial+1) = ~BpodSystem.Data.Custom.LeftHi(iTrial);
 else
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial);
@@ -67,13 +68,13 @@ else
     BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial);
 end
 
-if not(any(BpodSystem.Data.Custom.EarlyCout(iTrial),BpodSystem.Data.Custom.EarlySout(iTrial))) &&...
+if not(any([BpodSystem.Data.Custom.EarlyCout(iTrial),BpodSystem.Data.Custom.EarlySout(iTrial)])) &&...
         (~BpodSystem.Data.Custom.Baited.Left(iTrial) || BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1)
     BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
 else
     BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
 end
-if not(any(BpodSystem.Data.Custom.EarlyCout(iTrial),BpodSystem.Data.Custom.EarlySout(iTrial))) &&...
+if not(any([BpodSystem.Data.Custom.EarlyCout(iTrial),BpodSystem.Data.Custom.EarlySout(iTrial)])) &&...
         (~BpodSystem.Data.Custom.Baited.Right(iTrial) || BpodSystem.Data.Custom.ChoiceLeft(iTrial)==0)
     BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
 else

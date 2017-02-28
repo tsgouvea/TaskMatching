@@ -66,6 +66,7 @@ BpodSystem.Data.Custom.EarlySout(1) = false;
 BpodSystem.Data.Custom.Rewarded = false;
 BpodSystem.Data.Custom.SampleTime(1) = NaN;
 BpodSystem.Data.Custom.FeedbackTime(1) = NaN;
+BpodSystem.Data.Custom.RewardMagnitude(1,1:2) = TaskParameters.GUI.rewardAmount;
 
 %server data
 BpodSystem.Data.Custom.Rig = getenv('computername');
@@ -78,12 +79,8 @@ load PulsePalParamFeedback.mat
 BpodSystem.Data.Custom.PulsePalParamFeedback=PulsePalParamFeedback;
 
 %% Initialize plots
-BpodSystem.GUIHandles.Figs.MainFig = figure('Position', [200, 200, 1000, 400],'name','Outcome plot','numbertitle','off', 'MenuBar', 'none', 'Resize', 'off');
-BpodSystem.GUIHandles.Axes.OutcomePlot.MainHandle = axes('Position', [.06 .15 .91 .3]);
-BpodSystem.GUIHandles.Axes.TrialRate.MainHandle = axes('Position', [[1 0]*[.06;.12] .6 .12 .3]);
-BpodSystem.GUIHandles.Axes.SampleTimes.MainHandle = axes('Position', [[2 1]*[.06;.12] .6 .12 .3]);
-BpodSystem.GUIHandles.Axes.FeedbackTimes.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
-% MainPlot('init');
+
+MainPlot('init');
 BpodNotebook('init');
 
 %% Main loop
