@@ -2,6 +2,8 @@ function Matching
 % Reproduction on Bpod of protocol used in the PatonLab, MATCHINGvFix
 
 global BpodSystem
+global TaskParameters
+
 %% Task parameters
 TaskParameters = BpodSystem.ProtocolSettings;
 if isempty(fieldnames(TaskParameters))
@@ -21,7 +23,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.VI.Style = 'checkbox';
     TaskParameters.GUI.ChoiceDeadline = 10;
     TaskParameters.GUI.MinCutoff = 50; % New waiting time as percentile of empirical distribution
-    TaskParameters.GUIPanels.General = {'Ports_LMR','FI','VI','ChoiceDeadline','MinCutoff'};
+    TaskParameters.GUIPanels.General = {'Ports_LMR','ITI','VI','ChoiceDeadline','MinCutoff'};
     % Side Ports ("waiting for feedback")
     TaskParameters.GUI.MinFeedbackTime = 0;
     TaskParameters.GUI.MaxFeedbackTime = 1;
@@ -81,7 +83,7 @@ BpodSystem.GUIHandles.Axes.OutcomePlot.MainHandle = axes('Position', [.06 .15 .9
 BpodSystem.GUIHandles.Axes.TrialRate.MainHandle = axes('Position', [[1 0]*[.06;.12] .6 .12 .3]);
 BpodSystem.GUIHandles.Axes.SampleTimes.MainHandle = axes('Position', [[2 1]*[.06;.12] .6 .12 .3]);
 BpodSystem.GUIHandles.Axes.FeedbackTimes.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
-MainPlot('init');
+% MainPlot('init');
 BpodNotebook('init');
 
 %% Main loop
@@ -91,7 +93,7 @@ iTrial = 1;
 while RunSession
     TaskParameters = BpodParameterGUI('sync', TaskParameters);
     
-    sma = stateMatrix(TaskParameters);
+    sma = stateMatrix();
     SendStateMatrix(sma);
     RawEvents = RunStateMatrix;
     if ~isempty(fieldnames(RawEvents))

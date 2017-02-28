@@ -1,4 +1,4 @@
-function sma = stateMatrix(iTrial)
+function sma = stateMatrix()
 global BpodSystem
 global TaskParameters
 ValveTimes  = GetValveTimes(TaskParameters.GUI.rewardAmount, [1 3]);
@@ -16,8 +16,8 @@ RightPortIn = strcat('Port',num2str(RightPort),'In');
 LeftValve = 2^(LeftPort-1);
 RightValve = 2^(RightPort-1);
 
-LeftValveTime  = GetValveTimes(BpodSystem.Data.Custom.RewardMagnitude(iTrial,1), LeftPort);
-RightValveTime  = GetValveTimes(BpodSystem.Data.Custom.RewardMagnitude(iTrial,2), RightPort);
+LeftValveTime  = GetValveTimes(TaskParameters.GUI.rewardAmount, LeftPort);
+RightValveTime  = GetValveTimes(TaskParameters.GUI.rewardAmount, RightPort);
 
 if BpodSystem.Data.Custom.Baited.Left(end)
     LeftPokeAction = 'rewarded_Lin';
@@ -46,7 +46,7 @@ sma = AddState(sma, 'Name', 'Cin',...
 sma = AddState(sma, 'Name', 'wait_Sin',...
     'Timer',TaskParameters.GUI.ChoiceDeadline,...
     'StateChangeConditions', {LeftPortIn,'Lin',RightPortIn,'Rin','Tup','ITI'},...
-    'OutputActions',{strcat('PWM',num2str(LeftPort)),255,strcat('PWM',num2str(RightPort)),255},'SoftCode',2);
+    'OutputActions',{strcat('PWM',num2str(LeftPort)),255,strcat('PWM',num2str(RightPort)),255,'SoftCode',2});
 sma = AddState(sma, 'Name', 'Lin',...
     'Timer', TaskParameters.GUI.FeedbackTime,...
     'StateChangeConditions', {LeftPortOut, 'EarlyLout','Tup',LeftPokeAction},...
