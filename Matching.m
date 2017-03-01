@@ -77,11 +77,12 @@ BpodSystem.Data.Custom = orderfields(BpodSystem.Data.Custom);
 %% Set up PulsePal
 load PulsePalParamFeedback.mat
 BpodSystem.Data.Custom.PulsePalParamFeedback=PulsePalParamFeedback;
-ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamFeedback);
 BpodSystem.SoftCodeHandlerFunction = 'SoftCodeHandler';
+if ~BpodSystem.EmulatorMode
+    ProgramPulsePal(BpodSystem.Data.Custom.PulsePalParamFeedback);
+end
 
 %% Initialize plots
-
 MainPlot('init');
 BpodNotebook('init');
 
