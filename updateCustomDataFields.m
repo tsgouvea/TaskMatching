@@ -99,7 +99,7 @@ end
 TaskParameters.GUI.SampleTime = max(TaskParameters.GUI.MinSampleTime,min(TaskParameters.GUI.SampleTime,TaskParameters.GUI.MaxSampleTime));
 
 %% Side ports
-if TaskParameters.GUI.AutoIncrSample
+if TaskParameters.GUI.AutoIncrFeedback
     if sum(~isnan(BpodSystem.Data.Custom.FeedbackTime)) >= 10
         TaskParameters.GUI.FeedbackTime = prctile(BpodSystem.Data.Custom.FeedbackTime,TaskParameters.GUI.MinCutoff);
     else
