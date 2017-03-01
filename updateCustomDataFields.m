@@ -6,7 +6,11 @@ statesThisTrial = BpodSystem.Data.RawData.OriginalStateNamesByNumber{iTrial}(Bpo
 
 %% Center port
 if any(strcmp('Cin',statesThisTrial))
-    BpodSystem.Data.Custom.SampleTime(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin);    
+    if any(strcmp('stillSampling',statesThisTrial))
+        BpodSystem.Data.Custom.SampleTime(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.stillSampling(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin(1,1);
+    else
+        BpodSystem.Data.Custom.SampleTime(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin);
+    end
 end
 %% Side ports
 if any(strcmp('Lin',statesThisTrial)) || any(strcmp('Rin',statesThisTrial))
