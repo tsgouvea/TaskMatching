@@ -14,5 +14,9 @@ if ~BpodSystem.EmulatorMode
         SendCustomPulseTrain(2,0:.001:.3,(ones(1,301)*3));  % Beep on channel 1+2
         SendCustomPulseTrain(1,0:.001:.3,(ones(1,301)*3));
         TriggerPulsePal(1,2);
+    elseif softCode == 3 %
+        SendCustomPulseTrain(2,0:.0007:.3,(ones(1,429)*3));  % Beep on channel 1+2
+        SendCustomPulseTrain(1,0:.0007:.3,(ones(1,429)*3));
+        TriggerPulsePal(1,2);
     end
 end
