@@ -1,11 +1,11 @@
 function sma = stateMatrix()
 global BpodSystem
 global TaskParameters
-ValveTimes  = GetValveTimes(TaskParameters.GUI.rewardAmount, [1 3]);
 %% Define ports
 LeftPort = floor(mod(TaskParameters.GUI.Ports_LMR/100,10));
 CenterPort = floor(mod(TaskParameters.GUI.Ports_LMR/10,10));
 RightPort = mod(TaskParameters.GUI.Ports_LMR,10);
+ValveTimes  = GetValveTimes(TaskParameters.GUI.rewardAmount, [LeftPort RightPort]);
 LeftPortOut = strcat('Port',num2str(LeftPort),'Out');
 CenterPortOut = strcat('Port',num2str(CenterPort),'Out');
 RightPortOut = strcat('Port',num2str(RightPort),'Out');
