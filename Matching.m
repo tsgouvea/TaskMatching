@@ -13,7 +13,6 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.AutoIncrSample = false;
     TaskParameters.GUIMeta.AutoIncrSample.Style = 'checkbox';
     TaskParameters.GUI.EarlyCoutPenalty = 5;
-    TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
     TaskParameters.GUIMeta.SampleTime.Style = 'text';
     TaskParameters.GUIPanels.CenterPort = {'EarlyCoutPenalty','AutoIncrSample','MinSampleTime','MaxSampleTime','SampleTime'};
     % General
@@ -30,7 +29,6 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.EarlySoutPenalty = 1;
     TaskParameters.GUI.AutoIncrFeedback = false;
     TaskParameters.GUIMeta.AutoIncrFeedback.Style = 'checkbox';
-    TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
     TaskParameters.GUIMeta.FeedbackTime.Style = 'text';
     TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','AutoIncrFeedback','MinFeedbackTime','MaxFeedbackTime','FeedbackTime'};
     % Reward
@@ -44,6 +42,8 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
 BpodParameterGUI('init', TaskParameters);
+TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
+TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
 
 %% Initializing data (trial type) vectors
 
