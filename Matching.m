@@ -41,9 +41,9 @@ if isempty(fieldnames(TaskParameters))
     
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
-BpodParameterGUI('init', TaskParameters);
 TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
 TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
+BpodParameterGUI('init', TaskParameters);
 
 %% Initializing data (trial type) vectors
 
