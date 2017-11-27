@@ -83,7 +83,11 @@ if ~BpodSystem.EmulatorMode
 end
 
 %% Initialize plots
-MainPlot('init');
+temp = SessionSummary();
+for i = fieldnames(temp)'
+    BpodSystem.GUIHandles.(i{1}) = temp.(i{1});
+end
+clear temp
 BpodNotebook('init');
 
 %% Main loop
@@ -107,6 +111,6 @@ while RunSession
     
     updateCustomDataFields(iTrial)
     iTrial = iTrial + 1;
-    MainPlot('update',iTrial);
+    BpodSystem.GUIHandles = SessionSummary(BpodSystem.Data, BpodSystem.GUIHandles, iTrial);
 end
 end
