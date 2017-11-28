@@ -17,7 +17,7 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.OutcomePlot.MainHandle = axes('Position', [.06 .15 .91 .3]);
     GUIHandles.Axes.TrialRate.MainHandle = axes('Position', [[1 0]*[.06;.12] .6 .12 .3]);
     GUIHandles.Axes.SampleTimes.MainHandle = axes('Position', [[2 1]*[.06;.12] .6 .12 .3]);
-    GUIHandles.Axes.FeedbackTimes.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
+    GUIHandles.Axes.FeedbackDelay.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
     
     %% Outcome
     axes(GUIHandles.Axes.OutcomePlot.MainHandle)
@@ -46,10 +46,10 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.SampleTimes.MainHandle.YLabel.String = 'trial counts';
     GUIHandles.Axes.SampleTimes.MainHandle.Title.String = 'Center port WT';
     %% FT histogram
-    hold(GUIHandles.Axes.FeedbackTimes.MainHandle,'on')
-    GUIHandles.Axes.FeedbackTimes.MainHandle.XLabel.String = 'Time (s)';
-    GUIHandles.Axes.FeedbackTimes.MainHandle.YLabel.String = 'trial counts';
-    GUIHandles.Axes.FeedbackTimes.MainHandle.Title.String = 'Side port WT';
+    hold(GUIHandles.Axes.FeedbackDelay.MainHandle,'on')
+    GUIHandles.Axes.FeedbackDelay.MainHandle.XLabel.String = 'Time (s)';
+    GUIHandles.Axes.FeedbackDelay.MainHandle.YLabel.String = 'trial counts';
+    GUIHandles.Axes.FeedbackDelay.MainHandle.Title.String = 'Side port WT';
 else
     global TaskParameters
 end
@@ -133,15 +133,21 @@ if nargin > 0
     GUIHandles.Axes.SampleTimes.CutOff = plot(GUIHandles.Axes.SampleTimes.MainHandle,TaskParameters.GUI.SampleTime*1000,0,'^k');
     
     %% Feedback delay
-    cla(GUIHandles.Axes.FeedbackTimes.MainHandle)
-    GUIHandles.Axes.FeedbackTimes.Hist = histogram(GUIHandles.Axes.FeedbackTimes.MainHandle,Data.Custom.FeedbackTime*1000);
-    GUIHandles.Axes.FeedbackTimes.Hist.BinWidth = 50;
-    GUIHandles.Axes.FeedbackTimes.Hist.EdgeColor = 'none';
-    GUIHandles.Axes.FeedbackTimes.HistEarly = histogram(GUIHandles.Axes.FeedbackTimes.MainHandle,...
-        Data.Custom.FeedbackTime(Data.Custom.EarlySout)*1000);
-    GUIHandles.Axes.FeedbackTimes.HistEarly.BinWidth = 50;
-    GUIHandles.Axes.FeedbackTimes.HistEarly.EdgeColor = 'none';
-    GUIHandles.Axes.FeedbackTimes.CutOff = plot(GUIHandles.Axes.FeedbackTimes.MainHandle,TaskParameters.GUI.FeedbackTime*1000,0,'^k');
+    cla(GUIHandles.Axes.FeedbackDelay.MainHandle)
+    GUIHandles.Axes.FeedbackDelay.Hist = histogram(GUIHandles.Axes.FeedbackDelay.MainHandle,Data.Custom.FeedbackDelay*1000);
+    GUIHandles.Axes.FeedbackDelay.Hist.BinWidth = 50;
+    GUIHandles.Axes.FeedbackDelay.Hist.EdgeColor = 'none';
+    GUIHandles.Axes.FeedbackDelay.HistEarly = histogram(GUIHandles.Axes.FeedbackDelay.MainHandle,...
+        Data.Custom.FeedbackDelay(Data.Custom.EarlySout)*1000);
+    GUIHandles.Axes.FeedbackDelay.HistEarly.BinWidth = 50;
+    GUIHandles.Axes.FeedbackDelay.HistEarly.EdgeColor = 'none';
+    GUIHandles.Axes.FeedbackDelay.CutOff = plot(GUIHandles.Axes.FeedbackDelay.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
+    
+    if isfield(TaskParameters,'GUIMeta') && strcmp(TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection},'TruncExp')
+        GUIHandles.Axes.FeedbackDelay.Expected = plot(GUIHandles.Axes.FeedbackDelay.MainHandle,...
+            TaskParameters.GUI.FeedbackDelayMin*1000:TaskParameters.GUI.FeedbackDelayMax*1000,...
+            (GUIHandles.Axes.FeedbackDelay.Hist.BinWidth * iTrial) * exppdf(TaskParameters.GUI.FeedbackDelayMin*1000:TaskParameters.GUI.FeedbackDelayMax*1000,TaskParameters.GUI.FeedbackDelayTau*1000),'c');
+    end
 end
 end
 

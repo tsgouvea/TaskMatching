@@ -24,13 +24,16 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.MinCutoff = 50; % New waiting time as percentile of empirical distribution
     TaskParameters.GUIPanels.General = {'Ports_LMR','ITI','VI','ChoiceDeadline','MinCutoff'};
     % Side Ports ("waiting for feedback")
-    TaskParameters.GUI.MinFeedbackTime = 0;
-    TaskParameters.GUI.MaxFeedbackTime = 1;
     TaskParameters.GUI.EarlySoutPenalty = 1;
-    TaskParameters.GUI.AutoIncrFeedback = false;
-    TaskParameters.GUIMeta.AutoIncrFeedback.Style = 'checkbox';
-    TaskParameters.GUIMeta.FeedbackTime.Style = 'text';
-    TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','AutoIncrFeedback','MinFeedbackTime','MaxFeedbackTime','FeedbackTime'};
+    TaskParameters.GUI.FeedbackDelaySelection = 2;
+    TaskParameters.GUIMeta.FeedbackDelaySelection.Style = 'popupmenu';
+    TaskParameters.GUIMeta.FeedbackDelaySelection.String = {'Fix','AutoIncr','TruncExp'};
+    TaskParameters.GUI.FeedbackDelayMin = 0;
+    TaskParameters.GUI.FeedbackDelayMax = 1;
+    TaskParameters.GUI.FeedbackDelayTau = 0.05;
+    TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
+    TaskParameters.GUIMeta.FeedbackDelay.Style = 'text';
+    TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay'};
     % Reward
     TaskParameters.GUI.pHi =  40; % 0-100% Higher reward probability
     TaskParameters.GUI.pLo =  5; % 0-100% Lower reward probability
@@ -42,7 +45,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
 TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
-TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
+TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
 BpodParameterGUI('init', TaskParameters);
 
 %% Initializing data (trial type) vectors

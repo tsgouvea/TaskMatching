@@ -17,9 +17,9 @@ if any(strcmp('Lin',statesThisTrial)) || any(strcmp('Rin',statesThisTrial))
     Sin = statesThisTrial{strcmp('Lin',statesThisTrial)|strcmp('Rin',statesThisTrial)};
     if any(strcmp('stillLin',statesThisTrial)) || any(strcmp('stillRin',statesThisTrial))
         stillSin = statesThisTrial{strcmp('stillLin',statesThisTrial)|strcmp('stillRin',statesThisTrial)};
-        BpodSystem.Data.Custom.FeedbackTime(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(stillSin)(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
+        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(stillSin)(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
     else
-        BpodSystem.Data.Custom.FeedbackTime(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin));
+        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin));
     end
 end
 %%
@@ -39,7 +39,7 @@ BpodSystem.Data.Custom.EarlyCout(iTrial+1) = false;
 BpodSystem.Data.Custom.EarlySout(iTrial+1) = false;
 BpodSystem.Data.Custom.Rewarded(iTrial+1) = false;
 BpodSystem.Data.Custom.SampleTime(iTrial+1) = NaN;
-BpodSystem.Data.Custom.FeedbackTime(iTrial+1) = NaN;
+BpodSystem.Data.Custom.FeedbackDelay(iTrial+1) = NaN;
 
 %% Block count
 nTrialsThisBlock = sum(BpodSystem.Data.Custom.BlockNumber == BpodSystem.Data.Custom.BlockNumber(iTrial));
@@ -104,16 +104,20 @@ end
 TaskParameters.GUI.SampleTime = max(TaskParameters.GUI.MinSampleTime,min(TaskParameters.GUI.SampleTime,TaskParameters.GUI.MaxSampleTime));
 
 %% Side ports
-if TaskParameters.GUI.AutoIncrFeedback
-    if sum(~isnan(BpodSystem.Data.Custom.FeedbackTime)) >= 10
-        TaskParameters.GUI.FeedbackTime = prctile(BpodSystem.Data.Custom.FeedbackTime,TaskParameters.GUI.MinCutoff);
-    else
-        TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MinFeedbackTime;
-    end
-else
-    TaskParameters.GUI.FeedbackTime = TaskParameters.GUI.MaxFeedbackTime;
-end
-TaskParameters.GUI.FeedbackTime = max(TaskParameters.GUI.MinFeedbackTime,min(TaskParameters.GUI.FeedbackTime,TaskParameters.GUI.MaxFeedbackTime));
+switch TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection}
+    case 'Fix'
+        TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMax;
+    case 'AutoIncr'
+        if sum(~isnan(BpodSystem.Data.Custom.FeedbackDelay)) >= 10
+            TaskParameters.GUI.FeedbackDelay = prctile(BpodSystem.Data.Custom.FeedbackDelay,TaskParameters.GUI.MinCutoff);
+        else
+            TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
+        end
+    case 'TruncExp'
+        TaskParameters.GUI.FeedbackDelay = TruncatedExponential(TaskParameters.GUI.FeedbackDelayMin,...
+                TaskParameters.GUI.FeedbackDelayMax,TaskParameters.GUI.FeedbackDelayTau);
+            
+TaskParameters.GUI.FeedbackDelay = max(TaskParameters.GUI.FeedbackDelayMin,min(TaskParameters.GUI.FeedbackDelay,TaskParameters.GUI.FeedbackDelayMax));
 
 %% send bpod status to server
 try
