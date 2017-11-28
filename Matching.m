@@ -7,17 +7,21 @@ global TaskParameters
 %% Task parameters
 TaskParameters = BpodSystem.ProtocolSettings;
 if isempty(fieldnames(TaskParameters))
-    % Center Port ("stimulus sampling")
-    TaskParameters.GUI.MinSampleTime = 0;
-    TaskParameters.GUI.MaxSampleTime = 1;
-    TaskParameters.GUI.AutoIncrSample = false;
-    TaskParameters.GUIMeta.AutoIncrSample.Style = 'checkbox';
-    TaskParameters.GUI.EarlyCoutPenalty = 5;
-    TaskParameters.GUIMeta.SampleTime.Style = 'text';
-    TaskParameters.GUIPanels.CenterPort = {'EarlyCoutPenalty','AutoIncrSample','MinSampleTime','MaxSampleTime','SampleTime'};
-    % General
+    %% Center Port ("stimulus sampling")
+    TaskParameters.GUI.EarlyCoutPenalty = 0;
+    TaskParameters.GUI.StimDelaySelection = 4;
+    TaskParameters.GUIMeta.StimDelaySelection.Style = 'popupmenu';
+    TaskParameters.GUIMeta.StimDelaySelection.String = {'Fix','AutoIncr','TruncExp','Uniform'};
+    TaskParameters.GUI.StimDelayMin = 0.2;
+    TaskParameters.GUI.StimDelayMax = 0.5;
+    TaskParameters.GUI.StimDelayTau = 0.2;
+    TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMin;
+    TaskParameters.GUIMeta.StimDelay.Style = 'text';
+    TaskParameters.GUIPanels.StimDelay = {'EarlyCoutPenalty','StimDelaySelection','StimDelayMin','StimDelayMax','StimDelayTau','StimDelay'};
+    
+    %% General
     TaskParameters.GUI.Ports_LMR = '123';
-    TaskParameters.GUI.ITI = 5; % (s)
+    TaskParameters.GUI.ITI = 1; % (s)
     TaskParameters.GUI.VI = false; % random ITI
     TaskParameters.GUIMeta.VI.Style = 'checkbox';
     TaskParameters.GUI.ChoiceDeadline = 10;
@@ -27,24 +31,24 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.EarlySoutPenalty = 1;
     TaskParameters.GUI.FeedbackDelaySelection = 2;
     TaskParameters.GUIMeta.FeedbackDelaySelection.Style = 'popupmenu';
-    TaskParameters.GUIMeta.FeedbackDelaySelection.String = {'Fix','AutoIncr','TruncExp'};
+    TaskParameters.GUIMeta.FeedbackDelaySelection.String = {'Fix','AutoIncr','TruncExp','Uniform'};
     TaskParameters.GUI.FeedbackDelayMin = 0;
     TaskParameters.GUI.FeedbackDelayMax = 1;
-    TaskParameters.GUI.FeedbackDelayTau = 0.05;
+    TaskParameters.GUI.FeedbackDelayTau = 0.4;
     TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
     TaskParameters.GUIMeta.FeedbackDelay.Style = 'text';
     TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay'};
     % Reward
-    TaskParameters.GUI.pHi =  40; % 0-100% Higher reward probability
-    TaskParameters.GUI.pLo =  5; % 0-100% Lower reward probability
-    TaskParameters.GUI.blockLenMin = 100;
-    TaskParameters.GUI.blockLenMax = 250;
+    TaskParameters.GUI.pHi =  50; % 0-100% Higher reward probability
+    TaskParameters.GUI.pLo =  12; % 0-100% Lower reward probability
+    TaskParameters.GUI.blockLenMin = 50;
+    TaskParameters.GUI.blockLenMax = 100;
     TaskParameters.GUI.rewardAmount = 30;
     TaskParameters.GUIPanels.Reward = {'rewardAmount','pLo','pHi','blockLenMin','blockLenMax'};
     
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
 end
-TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
+TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMin;
 TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
 BpodParameterGUI('init', TaskParameters);
 
@@ -67,7 +71,7 @@ BpodSystem.Data.Custom.ChoiceLeft = NaN;
 BpodSystem.Data.Custom.EarlyCout(1) = false;
 BpodSystem.Data.Custom.EarlySout(1) = false;
 BpodSystem.Data.Custom.Rewarded = false;
-BpodSystem.Data.Custom.SampleTime(1) = NaN;
+BpodSystem.Data.Custom.StimDelay(1) = NaN;
 BpodSystem.Data.Custom.FeedbackTime(1) = NaN;
 BpodSystem.Data.Custom.RewardMagnitude(1,1:2) = TaskParameters.GUI.rewardAmount;
 

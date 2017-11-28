@@ -7,9 +7,9 @@ statesThisTrial = BpodSystem.Data.RawData.OriginalStateNamesByNumber{iTrial}(Bpo
 %% Center port
 if any(strcmp('Cin',statesThisTrial))
     if any(strcmp('stillSampling',statesThisTrial))
-        BpodSystem.Data.Custom.SampleTime(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.stillSampling(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin(1,1);
+        BpodSystem.Data.Custom.StimDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.stillSampling(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin(1,1);
     else
-        BpodSystem.Data.Custom.SampleTime(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin);
+        BpodSystem.Data.Custom.StimDelay(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin);
     end
 end
 %% Side ports
@@ -38,7 +38,7 @@ BpodSystem.Data.Custom.ChoiceLeft(iTrial+1) = NaN;
 BpodSystem.Data.Custom.EarlyCout(iTrial+1) = false;
 BpodSystem.Data.Custom.EarlySout(iTrial+1) = false;
 BpodSystem.Data.Custom.Rewarded(iTrial+1) = false;
-BpodSystem.Data.Custom.SampleTime(iTrial+1) = NaN;
+BpodSystem.Data.Custom.StimDelay(iTrial+1) = NaN;
 BpodSystem.Data.Custom.FeedbackDelay(iTrial+1) = NaN;
 
 %% Block count
@@ -92,21 +92,27 @@ end
 
 %increase sample time
 %% Center port
-if TaskParameters.GUI.AutoIncrSample
-    if sum(~isnan(BpodSystem.Data.Custom.SampleTime)) >= 10
-        TaskParameters.GUI.SampleTime = prctile(BpodSystem.Data.Custom.SampleTime,TaskParameters.GUI.MinCutoff);
-    else
-        TaskParameters.GUI.SampleTime = TaskParameters.GUI.MinSampleTime;
-    end
-else
-    TaskParameters.GUI.SampleTime = TaskParameters.GUI.MaxSampleTime;
+switch TaskParameters.GUIMeta.StimDelaySelection.String{TaskParameters.GUI.StimDelaySelection}
+    case 'Fix'
+        TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMax;
+    case 'AutoIncr'
+        if sum(~isnan(BpodSystem.Data.Custom.StimDelay)) >= 10
+            TaskParameters.GUI.StimDelay = prctile(BpodSystem.Data.Custom.StimDelay,TaskParameters.GUI.MinCutoff);
+        else
+            TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMin;
+        end
+    case 'TruncExp'
+        TaskParameters.GUI.StimDelay = TruncatedExponential(TaskParameters.GUI.StimDelayMin,...
+            TaskParameters.GUI.StimDelayMax,TaskParameters.GUI.StimDelayTau);
+    case 'Uniform'
+        TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMin + (TaskParameters.GUI.StimDelayMax-TaskParameters.GUI.StimDelayMin)*rand(1);
 end
-TaskParameters.GUI.SampleTime = max(TaskParameters.GUI.MinSampleTime,min(TaskParameters.GUI.SampleTime,TaskParameters.GUI.MaxSampleTime));
+TaskParameters.GUI.StimDelay = max(TaskParameters.GUI.StimDelayMin,min(TaskParameters.GUI.StimDelay,TaskParameters.GUI.StimDelayMax));
 
 %% Side ports
 switch TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection}
     case 'Fix'
-        TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMax;
+        TaskParameters.GUI.StimDelay = TaskParameters.GUI.FeedbackDelayMax;
     case 'AutoIncr'
         if sum(~isnan(BpodSystem.Data.Custom.FeedbackDelay)) >= 10
             TaskParameters.GUI.FeedbackDelay = prctile(BpodSystem.Data.Custom.FeedbackDelay,TaskParameters.GUI.MinCutoff);
@@ -115,8 +121,10 @@ switch TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.F
         end
     case 'TruncExp'
         TaskParameters.GUI.FeedbackDelay = TruncatedExponential(TaskParameters.GUI.FeedbackDelayMin,...
-                TaskParameters.GUI.FeedbackDelayMax,TaskParameters.GUI.FeedbackDelayTau);
-            
+            TaskParameters.GUI.FeedbackDelayMax,TaskParameters.GUI.FeedbackDelayTau);
+    case 'Uniform'
+        TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin + (TaskParameters.GUI.FeedbackDelayMax-TaskParameters.GUI.FeedbackDelayMin)*rand(1);
+        
 TaskParameters.GUI.FeedbackDelay = max(TaskParameters.GUI.FeedbackDelayMin,min(TaskParameters.GUI.FeedbackDelay,TaskParameters.GUI.FeedbackDelayMax));
 
 %% send bpod status to server
