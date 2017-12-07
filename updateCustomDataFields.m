@@ -66,35 +66,32 @@ else
     pR = TaskParameters.GUI.pHi/100;
 end
 
-if BpodSystem.Data.Custom.ChoiceLeft(iTrial) == 1
-    BpodSystem.Data.Custom.CumpL(iTrial+1) = pL;
-    BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial) + (1-BpodSystem.Data.Custom.CumpR(iTrial))*pR;
-elseif BpodSystem.Data.Custom.ChoiceLeft(iTrial) == 0
+BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
+BpodSystem.Data.Custom.CumpL(iTrial+1) = BpodSystem.Data.Custom.CumpL(iTrial);
+
+BpodSystem.Data.Custom.Baited.Right(iTrial+1) = BpodSystem.Data.Custom.Baited.Right(iTrial);
+BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial);
+
+if ~BpodSystem.Data.Custom.EarlyCout(iTrial)
     BpodSystem.Data.Custom.CumpL(iTrial+1) = BpodSystem.Data.Custom.CumpL(iTrial) + (1-BpodSystem.Data.Custom.CumpL(iTrial))*pL;
-    BpodSystem.Data.Custom.CumpR(iTrial+1) = pR;
-else
-    BpodSystem.Data.Custom.CumpL(iTrial+1) = BpodSystem.Data.Custom.CumpL(iTrial);
-    BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial);
+    BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial) + (1-BpodSystem.Data.Custom.CumpR(iTrial))*pR;
+    if ~BpodSystem.Data.Custom.Baited.Left(iTrial)
+        BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
+    end
+    if ~BpodSystem.Data.Custom.Baited.Right(iTrial)
+        BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
+    end
+    if BpodSystem.Data.Custom.Rewarded(iTrial)
+        if BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1
+            BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
+            BpodSystem.Data.Custom.CumpL(iTrial+1) = pL;
+        elseif BpodSystem.Data.Custom.ChoiceLeft(iTrial)==0
+            BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
+            BpodSystem.Data.Custom.CumpR(iTrial+1) = pR;
+        end
+    end
 end
 
-if ~BpodSystem.Data.Custom.EarlyCout(iTrial) &&...
-        (~BpodSystem.Data.Custom.EarlySout(iTrial) || strcmp('TruncExp',TaskParameters.GUIMeta.StimDelaySelection.String{TaskParameters.GUI.StimDelaySelection}))
-    if ~BpodSystem.Data.Custom.Baited.Left(iTrial) ||...
-            BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1
-        BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
-    else
-        BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
-    end
-    if ~BpodSystem.Data.Custom.Baited.Right(iTrial) ||...
-            BpodSystem.Data.Custom.ChoiceLeft(iTrial)==0
-        BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
-    else
-        BpodSystem.Data.Custom.Baited.Right(iTrial+1) = BpodSystem.Data.Custom.Baited.Right(iTrial);
-    end
-else
-    BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
-    BpodSystem.Data.Custom.Baited.Right(iTrial+1) = BpodSystem.Data.Custom.Baited.Right(iTrial);
-end
 %increase sample time
 %% Center port
 switch TaskParameters.GUIMeta.StimDelaySelection.String{TaskParameters.GUI.StimDelaySelection}
