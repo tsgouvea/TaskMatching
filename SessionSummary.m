@@ -19,6 +19,7 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.StimDelay.MainHandle = axes('Position', [[2 1]*[.06;.12] .6 .12 .3]);
     GUIHandles.Axes.FeedbackDelay.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
     GUIHandles.Axes.ChoiceKernel.MainHandle = axes('Position', [[4 3]*[.06;.12] .6 .12 .3]);
+    GUIHandles.Axes.Wager.MainHandle = axes('Position', [[5 4]*[.06;.12] .6 .12 .3]);
     
     %% Outcome
     axes(GUIHandles.Axes.OutcomePlot.MainHandle)
@@ -58,6 +59,12 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.ChoiceKernel.MainHandle.XLabel.String = 'Trials back';
     GUIHandles.Axes.ChoiceKernel.MainHandle.YLabel.String = 'GLM coefficient';
     GUIHandles.Axes.ChoiceKernel.MainHandle.Title.String = 'Choice kernel';
+    %% Time Wagering
+    hold(GUIHandles.Axes.Wager.MainHandle,'on')
+    GUIHandles.Axes.Wager.WT = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor','k','Visible','on');
+    GUIHandles.Axes.Wager.MainHandle.XLabel.String = 'log(pL)-log(pR)';
+    GUIHandles.Axes.Wager.MainHandle.YLabel.String = 'Waiting time (s)';
+    GUIHandles.Axes.Wager.MainHandle.Title.String = 'Time Wagering';
 else
     global TaskParameters
 end
@@ -165,12 +172,22 @@ if nargin > 0
     if sum(~isnan(Data.Custom.ChoiceLeft)) < 20
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'off';
     elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0
-        %%
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
-        GUIHandles.Axes.ChoiceKernel.Mdl = LauGlim( Data );
+        [GUIHandles.Axes.ChoiceKernel.Mdl, XData]  = LauGlim( Data );
         GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
         GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
         GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
+    end
+    
+    %% Time Wagering
+    hold(GUIHandles.Axes.Wager.MainHandle,'on')
+    if isfield(GUIHandles.Axes.ChoiceKernel,'Mdl')
+        GUIHandles.Axes.Wager.WT.Visible = 'on';
+        ndxUnrwd = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.Rewarded==0  & Data.Custom.EarlySout==0;
+        XData = XData(ndxUnrwd);
+        YData = Data.Custom.FeedbackDelay(ndxUnrwd);
+        GUIHandles.Axes.Wager.WT.XData = XData;
+        GUIHandles.Axes.Wager.WT.YData = YData;
     end
 end
 end
