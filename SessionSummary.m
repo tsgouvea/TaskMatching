@@ -18,6 +18,7 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.TrialRate.MainHandle = axes('Position', [[1 0]*[.06;.12] .6 .12 .3]);
     GUIHandles.Axes.StimDelay.MainHandle = axes('Position', [[2 1]*[.06;.12] .6 .12 .3]);
     GUIHandles.Axes.FeedbackDelay.MainHandle = axes('Position', [[3 2]*[.06;.12] .6 .12 .3]);
+    GUIHandles.Axes.ChoiceKernel.MainHandle = axes('Position', [[4 3]*[.06;.12] .6 .12 .3]);
     
     %% Outcome
     axes(GUIHandles.Axes.OutcomePlot.MainHandle)
@@ -50,6 +51,14 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.FeedbackDelay.MainHandle.XLabel.String = 'Time (s)';
     GUIHandles.Axes.FeedbackDelay.MainHandle.YLabel.String = 'trial counts';
     GUIHandles.Axes.FeedbackDelay.MainHandle.Title.String = 'Side port WT';
+    %% Choice Kernel
+    hold(GUIHandles.Axes.ChoiceKernel.MainHandle,'on')
+    GUIHandles.Axes.ChoiceKernel.Rwd = line(GUIHandles.Axes.ChoiceKernel.MainHandle,[1:5],zeros(5,1),'marker','p','linestyle','none','MarkerEdgeColor','b','Visible','on');
+    GUIHandles.Axes.ChoiceKernel.Cho = line(GUIHandles.Axes.ChoiceKernel.MainHandle,[1:5],zeros(5,1),'marker','o','linestyle','none','MarkerEdgeColor','k','Visible','on');
+    GUIHandles.Axes.ChoiceKernel.Bias = line(GUIHandles.Axes.ChoiceKernel.MainHandle,[1,5],[0,0],'Color',ones(1,3)*.7,'Visible','on');
+    GUIHandles.Axes.ChoiceKernel.MainHandle.XLabel.String = 'Trials back';
+    GUIHandles.Axes.ChoiceKernel.MainHandle.YLabel.String = 'GLM coefficient';
+    GUIHandles.Axes.ChoiceKernel.MainHandle.Title.String = 'Choice kernel';
 else
     global TaskParameters
 end
@@ -154,6 +163,19 @@ if nargin > 0
         %GUIHandles.Axes.FeedbackDelay.HistEarly.BinWidth = 50;
         GUIHandles.Axes.FeedbackDelay.HistEarly.EdgeColor = 'none';
         GUIHandles.Axes.FeedbackDelay.CutOff = plot(GUIHandles.Axes.FeedbackDelay.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
+    end
+    
+    %% Choice Kernel
+    % log(\frac{P(L|t)}{P(R|t)}) = Sum((R[t-k]*exp(-k*Beta_r))(k,0,n))+Sum((C[t-l]*exp(-l*Beta_c))(l,0,n))
+    if sum(~isnan(Data.Custom.ChoiceLeft)) < 20
+        GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'off';
+    elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0
+        %%
+        GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
+        GUIHandles.Axes.ChoiceKernel.Mdl = LauGlim( Data );
+        GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
+        GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
+        GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
     end
 end
 end
