@@ -59,13 +59,6 @@ BpodSystem.Data.Custom.Baited.Right = true;
 BpodSystem.Data.Custom.BlockNumber = 1;
 BpodSystem.Data.Custom.LeftHi = rand>.5;
 BpodSystem.Data.Custom.BlockLen = drawBlockLen(TaskParameters);
-if BpodSystem.Data.Custom.LeftHi
-    BpodSystem.Data.Custom.CumpL = TaskParameters.GUI.pHi/100;
-    BpodSystem.Data.Custom.CumpR = TaskParameters.GUI.pLo/100;
-else
-    BpodSystem.Data.Custom.CumpL = TaskParameters.GUI.pLo/100;
-    BpodSystem.Data.Custom.CumpR = TaskParameters.GUI.pHi/100;
-end
 
 BpodSystem.Data.Custom.ChoiceLeft = NaN;
 BpodSystem.Data.Custom.EarlyCout(1) = false;

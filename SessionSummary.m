@@ -30,7 +30,6 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.OutcomePlot.NoResponse = line(-1,1, 'LineStyle','none','Marker','o','MarkerEdge','b','MarkerFace','none', 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.EarlyCout = line(-1,0, 'LineStyle','none','Marker','d','MarkerEdge','none','MarkerFace','b', 'MarkerSize',6);
     GUIHandles.Axes.OutcomePlot.EarlySout = line(-1,0, 'LineStyle','none','Marker','d','MarkerEdge','none','MarkerFace','b', 'MarkerSize',6);
-    GUIHandles.Axes.OutcomePlot.LogOdds = line([0 1],[0 1], 'LineStyle','-','Color','k');
     GUIHandles.Axes.OutcomePlot.CumRwd = text(1,1,'0mL','verticalalignment','bottom','horizontalalignment','center');
     set(GUIHandles.Axes.OutcomePlot.MainHandle,'TickDir', 'out','YLim', [-1, 2],'XLim',[0,nTrialsToShow], 'YTick', [0 1],'YTickLabel', {'Right','Left'}, 'FontSize', 16);
     xlabel(GUIHandles.Axes.OutcomePlot.MainHandle, 'Trial#', 'FontSize', 18);
@@ -97,10 +96,6 @@ if nargin > 0
         Ydata = [ones(sum(Data.Custom.Baited.Left(indxToPlot)),1)', zeros(sum(Data.Custom.Baited.Right(indxToPlot)),1)'];
         Xdata = [indxToPlot(Data.Custom.Baited.Left(indxToPlot)), indxToPlot(Data.Custom.Baited.Right(indxToPlot))];
         set(GUIHandles.Axes.OutcomePlot.Bait, 'xdata', Xdata, 'ydata', Ydata);
-        
-        Ydata = .5+log10(Data.Custom.CumpL(indxToPlot)./Data.Custom.CumpR(indxToPlot));
-        Xdata = indxToPlot;
-        set(GUIHandles.Axes.OutcomePlot.LogOdds, 'xdata', Xdata, 'ydata', Ydata);
     end
     if ~isempty(Data.Custom.EarlyCout)
         indxToPlot = mn:iTrial-1;

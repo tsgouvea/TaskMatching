@@ -66,30 +66,27 @@ else
     pR = TaskParameters.GUI.pHi/100;
 end
 
-BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
-BpodSystem.Data.Custom.CumpL(iTrial+1) = BpodSystem.Data.Custom.CumpL(iTrial);
-
-BpodSystem.Data.Custom.Baited.Right(iTrial+1) = BpodSystem.Data.Custom.Baited.Right(iTrial);
-BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial);
+drawL = false;
+drawR = false;
 
 if ~BpodSystem.Data.Custom.EarlyCout(iTrial)
-    BpodSystem.Data.Custom.CumpL(iTrial+1) = BpodSystem.Data.Custom.CumpL(iTrial) + (1-BpodSystem.Data.Custom.CumpL(iTrial))*pL;
-    BpodSystem.Data.Custom.CumpR(iTrial+1) = BpodSystem.Data.Custom.CumpR(iTrial) + (1-BpodSystem.Data.Custom.CumpR(iTrial))*pR;
-    if ~BpodSystem.Data.Custom.Baited.Left(iTrial)
-        BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
+    if ~BpodSystem.Data.Custom.Baited.Left(iTrial) || (BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1 && BpodSystem.Data.Custom.Rewarded(iTrial))
+        drawL = true;
     end
-    if ~BpodSystem.Data.Custom.Baited.Right(iTrial)
-        BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
+    if ~BpodSystem.Data.Custom.Baited.Right(iTrial) || (BpodSystem.Data.Custom.ChoiceLeft(iTrial)==0 && BpodSystem.Data.Custom.Rewarded(iTrial))
+        drawR = true;
     end
-    if BpodSystem.Data.Custom.Rewarded(iTrial)
-        if BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1
-            BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
-            BpodSystem.Data.Custom.CumpL(iTrial+1) = pL;
-        elseif BpodSystem.Data.Custom.ChoiceLeft(iTrial)==0
-            BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
-            BpodSystem.Data.Custom.CumpR(iTrial+1) = pR;
-        end
-    end
+end
+
+if drawL
+    BpodSystem.Data.Custom.Baited.Left(iTrial+1) = rand<pL;
+else
+    BpodSystem.Data.Custom.Baited.Left(iTrial+1) = BpodSystem.Data.Custom.Baited.Left(iTrial);
+end
+if drawR
+    BpodSystem.Data.Custom.Baited.Right(iTrial+1) = rand<pR;
+else
+    BpodSystem.Data.Custom.Baited.Right(iTrial+1) = BpodSystem.Data.Custom.Baited.Right(iTrial);
 end
 
 %increase sample time
