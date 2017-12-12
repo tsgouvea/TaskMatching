@@ -63,8 +63,9 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.ChoiceKernel.MainHandle.Title.String = 'Choice kernel';
     %% Time Wagering
     hold(GUIHandles.Axes.Wager.MainHandle,'on')
-    GUIHandles.Axes.Wager.WT = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor','k','Visible','on');
-    GUIHandles.Axes.Wager.MainHandle.XLabel.String = 'log(pL)-log(pR)';
+    GUIHandles.Axes.Wager.Scatter = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor',ones(1,3)*.7,'Visible','on');
+    GUIHandles.Axes.Wager.Line = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'Color','k','Visible','on');
+    GUIHandles.Axes.Wager.MainHandle.XLabel.String = 'log(pL/pR)';
     GUIHandles.Axes.Wager.MainHandle.YLabel.String = 'Waiting time (s)';
     GUIHandles.Axes.Wager.MainHandle.Title.String = 'Time Wagering';
 else
@@ -178,23 +179,28 @@ if nargin > 0
     % log(\frac{P(L|t)}{P(R|t)}) = Sum((R[t-k]*exp(-k*Beta_r))(k,0,n))+Sum((C[t-l]*exp(-l*Beta_c))(l,0,n))
     if sum(~isnan(Data.Custom.ChoiceLeft)) < 20
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'off';
-    elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0
+    elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0 || nargin == 1 % every 20 trials OR when called offline
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
         [GUIHandles.Axes.ChoiceKernel.Mdl, XData]  = LauGlim( Data );
         GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
         GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
         GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
-    end
-    
-    %% Time Wagering
-    hold(GUIHandles.Axes.Wager.MainHandle,'on')
-    if isfield(GUIHandles.Axes.ChoiceKernel,'Mdl')
-        GUIHandles.Axes.Wager.WT.Visible = 'on';
-        ndxUnrwd = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.Rewarded==0  & Data.Custom.EarlySout==0;
-        XData = XData(ndxUnrwd);
-        YData = Data.Custom.FeedbackDelay(ndxUnrwd);
-        GUIHandles.Axes.Wager.WT.XData = XData;
-        GUIHandles.Axes.Wager.WT.YData = YData;
+        
+        
+        %% Time Wagering
+        hold(GUIHandles.Axes.Wager.MainHandle,'on')
+        if isfield(GUIHandles.Axes.ChoiceKernel,'Mdl')
+            GUIHandles.Axes.Wager.Scatter.Visible = 'on';
+            GUIHandles.Axes.Wager.Line.Visible = 'on';
+            ndxUnrwd = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.Rewarded~=1;%  & Data.Custom.EarlySout==0;
+            XData = XData(ndxUnrwd);
+            YData = Data.Custom.FeedbackDelay(ndxUnrwd);
+            GUIHandles.Axes.Wager.Scatter.XData = XData;
+            GUIHandles.Axes.Wager.Scatter.YData = YData;
+            [GUIHandles.Axes.Wager.Line.XData, ndx] = sort(XData(:));
+            GUIHandles.Axes.Wager.Line.YData = smooth(YData(ndx));
+            GUIHandles.Axes.Wager.MainHandle.XLim = 1.1*[min(XData) max(XData)];
+        end
     end
 end
 end
