@@ -37,7 +37,9 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     hold(GUIHandles.Axes.OutcomePlot.MainHandle, 'on');
     %% Trial rate
     hold(GUIHandles.Axes.TrialRate.MainHandle,'on')
-    GUIHandles.Axes.TrialRate.TrialRate = line(GUIHandles.Axes.TrialRate.MainHandle,[0],[0], 'LineStyle','-','Color','k','Visible','on');
+    GUIHandles.Axes.TrialRate.TrialRate = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color','k','Visible','on');
+    GUIHandles.Axes.TrialRate.TrialRateL = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[254,178,76]/255,'Visible','on');
+    GUIHandles.Axes.TrialRate.TrialRateR = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[49,163,84]/255,'Visible','on');
     GUIHandles.Axes.TrialRate.MainHandle.XLabel.String = 'Time (min)';
     GUIHandles.Axes.TrialRate.MainHandle.YLabel.String = 'nTrials';
     GUIHandles.Axes.TrialRate.MainHandle.Title.String = 'Trial rate';
@@ -130,7 +132,12 @@ if nargin > 0
     %% Trial rate
     GUIHandles.Axes.TrialRate.TrialRate.XData = (Data.TrialStartTimestamp-min(Data.TrialStartTimestamp))/60;
     GUIHandles.Axes.TrialRate.TrialRate.YData = 1:numel(GUIHandles.Axes.TrialRate.TrialRate.XData);
-    
+    ndxCho = Data.Custom.ChoiceLeft(:)==1;
+    GUIHandles.Axes.TrialRate.TrialRateL.XData = (Data.TrialStartTimestamp(ndxCho)-min(Data.TrialStartTimestamp))/60;
+    GUIHandles.Axes.TrialRate.TrialRateL.YData = 1:numel(GUIHandles.Axes.TrialRate.TrialRateL.XData);
+    ndxCho = Data.Custom.ChoiceLeft(:)==0;
+    GUIHandles.Axes.TrialRate.TrialRateR.XData = (Data.TrialStartTimestamp(ndxCho)-min(Data.TrialStartTimestamp))/60;
+    GUIHandles.Axes.TrialRate.TrialRateR.YData = 1:numel(GUIHandles.Axes.TrialRate.TrialRateR.XData);
     %% Stimulus delay
     cla(GUIHandles.Axes.StimDelay.MainHandle)
     GUIHandles.Axes.StimDelay.Hist = histogram(GUIHandles.Axes.StimDelay.MainHandle,...
