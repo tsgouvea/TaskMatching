@@ -37,9 +37,9 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     hold(GUIHandles.Axes.OutcomePlot.MainHandle, 'on');
     %% Trial rate
     hold(GUIHandles.Axes.TrialRate.MainHandle,'on')
-    GUIHandles.Axes.TrialRate.TrialRate = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color','k','Visible','on');
-    GUIHandles.Axes.TrialRate.TrialRateL = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[254,178,76]/255,'Visible','on');
-    GUIHandles.Axes.TrialRate.TrialRateR = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[49,163,84]/255,'Visible','on');
+    GUIHandles.Axes.TrialRate.TrialRate = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color','k','Visible','on','linewidth',3);
+    GUIHandles.Axes.TrialRate.TrialRateL = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[254,178,76]/255,'Visible','on','linewidth',3);
+    GUIHandles.Axes.TrialRate.TrialRateR = line(GUIHandles.Axes.TrialRate.MainHandle,[0 1],[0 1], 'LineStyle','-','Color',[49,163,84]/255,'Visible','on','linewidth',3);
     GUIHandles.Axes.TrialRate.MainHandle.XLabel.String = 'Time (min)';
     GUIHandles.Axes.TrialRate.MainHandle.YLabel.String = 'nTrials';
     GUIHandles.Axes.TrialRate.MainHandle.Title.String = 'Trial rate';
@@ -63,11 +63,14 @@ if nargin < 2 % plot initialized (either beginning of session or post-hoc analys
     GUIHandles.Axes.ChoiceKernel.MainHandle.Title.String = 'Choice kernel';
     %% Time Wagering
     hold(GUIHandles.Axes.Wager.MainHandle,'on')
-    GUIHandles.Axes.Wager.Scatter = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor',ones(1,3)*.7,'Visible','on');
-    GUIHandles.Axes.Wager.Line = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'Color','k','Visible','on');
+    %colors from [http://paletton.com/#uid=3000u0kllllaFw0g0qFqFg0w0aF]
+    GUIHandles.Axes.Wager.ExploitScatter = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor',[40, 60, 60]/100,'Visible','on');
+    GUIHandles.Axes.Wager.ExploreScatter = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'marker','o','linestyle','none','MarkerEdgeColor',[83.1, 41.6, 41.6]/100,'Visible','on');
+    GUIHandles.Axes.Wager.ExploitLine = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'Color',[13.3, 40, 40]/100,'Visible','on','linewidth',2);
+    GUIHandles.Axes.Wager.ExploreLine = line(GUIHandles.Axes.Wager.MainHandle,[1,5],[0,0],'Color',[50.2, 8.2, 8.2]/100,'Visible','on','linewidth',2);
     GUIHandles.Axes.Wager.MainHandle.XLabel.String = 'log(pL/pR)';
     GUIHandles.Axes.Wager.MainHandle.YLabel.String = 'Waiting time (s)';
-    GUIHandles.Axes.Wager.MainHandle.Title.String = 'Time Wagering';
+    GUIHandles.Axes.Wager.MainHandle.Title.String = 'Vevaiometric?';
 else
     global TaskParameters
 end
@@ -181,7 +184,7 @@ if nargin > 0
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'off';
     elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0 || nargin == 1 % every 20 trials OR when called offline
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
-        [GUIHandles.Axes.ChoiceKernel.Mdl, XData]  = LauGlim( Data );
+        [GUIHandles.Axes.ChoiceKernel.Mdl, logodds]  = LauGlim( Data );
         GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
         GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
         GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
@@ -189,18 +192,19 @@ if nargin > 0
         
         %% Time Wagering
         hold(GUIHandles.Axes.Wager.MainHandle,'on')
-        if isfield(GUIHandles.Axes.ChoiceKernel,'Mdl')
-            GUIHandles.Axes.Wager.Scatter.Visible = 'on';
-            GUIHandles.Axes.Wager.Line.Visible = 'on';
-            ndxUnrwd = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft) & Data.Custom.Rewarded~=1;%  & Data.Custom.EarlySout==0;
-            XData = XData(ndxUnrwd);
-            YData = Data.Custom.FeedbackDelay(ndxUnrwd);
-            GUIHandles.Axes.Wager.Scatter.XData = XData;
-            GUIHandles.Axes.Wager.Scatter.YData = YData;
-            [GUIHandles.Axes.Wager.Line.XData, ndx] = sort(XData(:));
-            GUIHandles.Axes.Wager.Line.YData = smooth(YData(ndx));
-            GUIHandles.Axes.Wager.MainHandle.XLim = 1.1*[min(XData) max(XData)];
-        end
+        GUIHandles.Axes.Wager.ExploreScatter.Visible = 'on';
+        GUIHandles.Axes.Wager.ExploreLine.Visible = 'on';
+        ndxBaited = (Data.Custom.Baited.Left & Data.Custom.ChoiceLeft==1) | (Data.Custom.Baited.Right & Data.Custom.ChoiceLeft==0);
+        ndxBaited = ndxBaited(:);
+        ndxValid = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft); ndxValid = ndxValid(:);
+        ndxExploit = Data.Custom.ChoiceLeft(:) == (logodds>0);
+        GUIHandles.Axes.Wager.ExploreScatter.XData = logodds(ndxValid & ~ndxBaited & ~ndxExploit);
+        GUIHandles.Axes.Wager.ExploreScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ~ndxExploit);
+        GUIHandles.Axes.Wager.ExploitScatter.XData = logodds(ndxValid & ~ndxBaited & ndxExploit);
+        GUIHandles.Axes.Wager.ExploitScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ndxExploit);
+        [GUIHandles.Axes.Wager.ExploreLine.XData, GUIHandles.Axes.Wager.ExploreLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploreScatter.XData,GUIHandles.Axes.Wager.ExploreScatter.YData);
+        [GUIHandles.Axes.Wager.ExploitLine.XData, GUIHandles.Axes.Wager.ExploitLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploitScatter.XData,GUIHandles.Axes.Wager.ExploitScatter.YData);
+        GUIHandles.Axes.Wager.MainHandle.XLim = 1.1*[min(GUIHandles.Axes.Wager.ExploitScatter.XData) max(GUIHandles.Axes.Wager.ExploitScatter.XData)];
     end
 end
 end
