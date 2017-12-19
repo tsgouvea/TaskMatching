@@ -183,28 +183,30 @@ if nargin > 0
     if sum(~isnan(Data.Custom.ChoiceLeft)) < 20
         GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'off';
     elseif rem(sum(~isnan(Data.Custom.ChoiceLeft)),20)==0 || nargin == 1 % every 20 trials OR when called offline
-        GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
-        [GUIHandles.Axes.ChoiceKernel.Mdl, logodds]  = LauGlim( Data );
-        GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
-        GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
-        GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
-        
-        
-        %% Time Wagering
-        hold(GUIHandles.Axes.Wager.MainHandle,'on')
-        GUIHandles.Axes.Wager.ExploreScatter.Visible = 'on';
-        GUIHandles.Axes.Wager.ExploreLine.Visible = 'on';
-        ndxBaited = (Data.Custom.Baited.Left & Data.Custom.ChoiceLeft==1) | (Data.Custom.Baited.Right & Data.Custom.ChoiceLeft==0);
-        ndxBaited = ndxBaited(:);
-        ndxValid = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft); ndxValid = ndxValid(:);
-        ndxExploit = Data.Custom.ChoiceLeft(:) == (logodds>0);
-        GUIHandles.Axes.Wager.ExploreScatter.XData = logodds(ndxValid & ~ndxBaited & ~ndxExploit);
-        GUIHandles.Axes.Wager.ExploreScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ~ndxExploit);
-        GUIHandles.Axes.Wager.ExploitScatter.XData = logodds(ndxValid & ~ndxBaited & ndxExploit);
-        GUIHandles.Axes.Wager.ExploitScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ndxExploit);
-        [GUIHandles.Axes.Wager.ExploreLine.XData, GUIHandles.Axes.Wager.ExploreLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploreScatter.XData,GUIHandles.Axes.Wager.ExploreScatter.YData);
-        [GUIHandles.Axes.Wager.ExploitLine.XData, GUIHandles.Axes.Wager.ExploitLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploitScatter.XData,GUIHandles.Axes.Wager.ExploitScatter.YData);
-        GUIHandles.Axes.Wager.MainHandle.XLim = 1.1*[min(GUIHandles.Axes.Wager.ExploitScatter.XData) max(GUIHandles.Axes.Wager.ExploitScatter.XData)];
+        try
+            GUIHandles.Axes.ChoiceKernel.MainHandle.Visible = 'on';
+            [GUIHandles.Axes.ChoiceKernel.Mdl, logodds]  = LauGlim( Data );
+            GUIHandles.Axes.ChoiceKernel.Rwd.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(7:11);
+            GUIHandles.Axes.ChoiceKernel.Cho.YData = GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(2:6);
+            GUIHandles.Axes.ChoiceKernel.Bias.YData = [1,1]*GUIHandles.Axes.ChoiceKernel.Mdl.Coefficients.Estimate(1);
+            
+            
+            %% Time Wagering
+            hold(GUIHandles.Axes.Wager.MainHandle,'on')
+            GUIHandles.Axes.Wager.ExploreScatter.Visible = 'on';
+            GUIHandles.Axes.Wager.ExploreLine.Visible = 'on';
+            ndxBaited = (Data.Custom.Baited.Left & Data.Custom.ChoiceLeft==1) | (Data.Custom.Baited.Right & Data.Custom.ChoiceLeft==0);
+            ndxBaited = ndxBaited(:);
+            ndxValid = Data.Custom.EarlyCout==0 & ~isnan(Data.Custom.ChoiceLeft); ndxValid = ndxValid(:);
+            ndxExploit = Data.Custom.ChoiceLeft(:) == (logodds>0);
+            GUIHandles.Axes.Wager.ExploreScatter.XData = logodds(ndxValid & ~ndxBaited & ~ndxExploit);
+            GUIHandles.Axes.Wager.ExploreScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ~ndxExploit);
+            GUIHandles.Axes.Wager.ExploitScatter.XData = logodds(ndxValid & ~ndxBaited & ndxExploit);
+            GUIHandles.Axes.Wager.ExploitScatter.YData = Data.Custom.FeedbackDelay(ndxValid & ~ndxBaited & ndxExploit);
+            [GUIHandles.Axes.Wager.ExploreLine.XData, GUIHandles.Axes.Wager.ExploreLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploreScatter.XData,GUIHandles.Axes.Wager.ExploreScatter.YData);
+            [GUIHandles.Axes.Wager.ExploitLine.XData, GUIHandles.Axes.Wager.ExploitLine.YData] = binvevaio(GUIHandles.Axes.Wager.ExploitScatter.XData,GUIHandles.Axes.Wager.ExploitScatter.YData);
+            GUIHandles.Axes.Wager.MainHandle.XLim = 1.1*[min(GUIHandles.Axes.Wager.ExploitScatter.XData) max(GUIHandles.Axes.Wager.ExploitScatter.XData)];
+        end
     end
 end
 end
