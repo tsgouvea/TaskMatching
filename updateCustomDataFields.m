@@ -18,8 +18,8 @@ if any(strcmp('Lin',statesThisTrial)) || any(strcmp('Rin',statesThisTrial))
     if any(strcmp('stillLin',statesThisTrial)) || any(strcmp('stillRin',statesThisTrial))
         stillSin = statesThisTrial{strcmp('stillLin',statesThisTrial)|strcmp('stillRin',statesThisTrial)};
         BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(stillSin)(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
-    else
-        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin));
+    elseif any(strcmp(['Early' Sin(1) 'out'],statesThisTrial))
+        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(['Early' Sin(1) 'out'])(1,1) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(Sin)(1,1);
     end
 end
 %%

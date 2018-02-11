@@ -37,7 +37,8 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.FeedbackDelayTau = 0.4;
     TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMin;
     TaskParameters.GUIMeta.FeedbackDelay.Style = 'text';
-    TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay'};
+    TaskParameters.GUI.Grace = 0.2;
+    TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay','Grace'};
     % Reward
     TaskParameters.GUI.pHi =  50; % 0-100% Higher reward probability
     TaskParameters.GUI.pLo =  12; % 0-100% Lower reward probability
