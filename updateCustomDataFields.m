@@ -111,7 +111,7 @@ TaskParameters.GUI.StimDelay = max(TaskParameters.GUI.StimDelayMin,min(TaskParam
 %% Side ports
 switch TaskParameters.GUIMeta.FeedbackDelaySelection.String{TaskParameters.GUI.FeedbackDelaySelection}
     case 'Fix'
-        TaskParameters.GUI.StimDelay = TaskParameters.GUI.FeedbackDelayMax;
+        TaskParameters.GUI.FeedbackDelay = TaskParameters.GUI.FeedbackDelayMax;
     case 'AutoIncr'
         if sum(~isnan(BpodSystem.Data.Custom.FeedbackDelay)) >= 10
             TaskParameters.GUI.FeedbackDelay = prctile(BpodSystem.Data.Custom.FeedbackDelay,TaskParameters.GUI.MinCutoff);
