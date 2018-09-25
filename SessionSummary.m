@@ -168,12 +168,12 @@ if nargin > 0
             min(Data.Custom.FeedbackDelay)*1000:max(Data.Custom.FeedbackDelay)*1000,...
             (GUIHandles.Axes.FeedbackDelay.Hist.BinWidth * iTrial) * exppdf(min(Data.Custom.FeedbackDelay)*1000:max(Data.Custom.FeedbackDelay)*1000,TaskParameters.GUI.FeedbackDelayTau*1000),'c');
     else
-        GUIHandles.Axes.FeedbackDelay.Hist = histogram(GUIHandles.Axes.FeedbackDelay.MainHandle,Data.Custom.FeedbackDelay*1000);
-        %GUIHandles.Axes.FeedbackDelay.Hist.BinWidth = 50;
+        GUIHandles.Axes.FeedbackDelay.Hist = histogram(GUIHandles.Axes.FeedbackDelay.MainHandle,Data.Custom.FeedbackDelay(~Data.Custom.EarlySout)*1000);
+        GUIHandles.Axes.FeedbackDelay.Hist.BinWidth = 50;
         GUIHandles.Axes.FeedbackDelay.Hist.EdgeColor = 'none';
         GUIHandles.Axes.FeedbackDelay.HistEarly = histogram(GUIHandles.Axes.FeedbackDelay.MainHandle,...
             Data.Custom.FeedbackDelay(Data.Custom.EarlySout)*1000);
-        %GUIHandles.Axes.FeedbackDelay.HistEarly.BinWidth = 50;
+        GUIHandles.Axes.FeedbackDelay.HistEarly.BinWidth = 50;
         GUIHandles.Axes.FeedbackDelay.HistEarly.EdgeColor = 'none';
         GUIHandles.Axes.FeedbackDelay.CutOff = plot(GUIHandles.Axes.FeedbackDelay.MainHandle,TaskParameters.GUI.FeedbackDelay*1000,0,'^k');
     end
