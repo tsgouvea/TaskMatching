@@ -49,7 +49,7 @@ if nTrialsThisBlock >= TaskParameters.GUI.blockLenMax
 end
 if nTrialsThisBlock >= BpodSystem.Data.Custom.BlockLen(end)
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial)+1;
-    BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen(TaskParameters);
+    BpodSystem.Data.Custom.BlockLen(end+1) = drawBlockLen();
     BpodSystem.Data.Custom.LeftHi(iTrial+1) = ~BpodSystem.Data.Custom.LeftHi(iTrial);
 else
     BpodSystem.Data.Custom.BlockNumber(iTrial+1) = BpodSystem.Data.Custom.BlockNumber(iTrial);

@@ -1,6 +1,8 @@
-function BlockLen = drawBlockLen(TaskParameters)
+function BlockLen = drawBlockLen()
+global TaskParameters BpodSystem
 if TaskParameters.GUI.blockLenMax < TaskParameters.GUI.blockLenMin
     TaskParameters.GUI.blockLenMax = TaskParameters.GUI.blockLenMax + TaskParameters.GUI.blockLenMin;
+    set(BpodSystem.GUIHandles.ParameterGUI.Params{strcmp(BpodSystem.GUIData.ParameterGUI.ParamNames,'blockLenMax')}, 'String', TaskParameters.GUI.blockLenMax);
     warning('Bpod:Matching:blockLenMinMax','Minimum greater than maximum. Maximum interpreted as offset from minimum.')
 end
 BlockLen = 0;

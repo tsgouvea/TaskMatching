@@ -59,7 +59,7 @@ BpodSystem.Data.Custom.Baited.Left = true;
 BpodSystem.Data.Custom.Baited.Right = true;
 BpodSystem.Data.Custom.BlockNumber = 1;
 BpodSystem.Data.Custom.LeftHi = rand>.5;
-BpodSystem.Data.Custom.BlockLen = drawBlockLen(TaskParameters);
+BpodSystem.Data.Custom.BlockLen = drawBlockLen();
 
 BpodSystem.Data.Custom.ChoiceLeft = NaN;
 BpodSystem.Data.Custom.EarlyCout(1) = false;
