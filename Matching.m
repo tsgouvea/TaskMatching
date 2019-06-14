@@ -64,6 +64,7 @@ BpodSystem.Data.Custom.BlockLen = drawBlockLen();
 BpodSystem.Data.Custom.ChoiceLeft = NaN;
 BpodSystem.Data.Custom.EarlyCout(1) = false;
 BpodSystem.Data.Custom.EarlySout(1) = false;
+BpodSystem.Data.Custom.Grace(1) = false;
 BpodSystem.Data.Custom.Rewarded = false;
 BpodSystem.Data.Custom.StimDelay(1) = NaN;
 BpodSystem.Data.Custom.FeedbackTime(1) = NaN;
