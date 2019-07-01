@@ -8,6 +8,8 @@ global TaskParameters
 TaskParameters = BpodSystem.ProtocolSettings;
 if isempty(fieldnames(TaskParameters))
     %% Center Port ("stimulus sampling")
+    TaskParameters.GUI.LoopbackFix = true; % breaking fixation (FixTimeMin) doesn't abort trial
+    TaskParameters.GUIMeta.LoopbackFix.Style = 'checkbox';
     TaskParameters.GUI.EarlyCoutPenalty = 0;
     TaskParameters.GUI.StimDelaySelection = 4;
     TaskParameters.GUIMeta.StimDelaySelection.Style = 'popupmenu';
@@ -17,7 +19,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.StimDelayTau = 0.2;
     TaskParameters.GUI.StimDelay = TaskParameters.GUI.StimDelayMin;
     TaskParameters.GUIMeta.StimDelay.Style = 'text';
-    TaskParameters.GUIPanels.StimDelay = {'EarlyCoutPenalty','StimDelaySelection','StimDelayMin','StimDelayMax','StimDelayTau','StimDelay'};
+    TaskParameters.GUIPanels.StimDelay = {'LoopbackFix','EarlyCoutPenalty','StimDelaySelection','StimDelayMin','StimDelayMax','StimDelayTau','StimDelay'};
     
     %% General
     TaskParameters.GUI.Ports_LMR = '123';
