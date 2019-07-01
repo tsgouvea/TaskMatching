@@ -99,7 +99,7 @@ end
 drawL = false;
 drawR = false;
 
-if ~BpodSystem.Data.Custom.EarlyCout(iTrial)
+if ~BpodSystem.Data.Custom.EarlyCout(iTrial) || TaskParameters.GUI.LoopbackFix
     if ~BpodSystem.Data.Custom.Baited.Left(iTrial) || (BpodSystem.Data.Custom.ChoiceLeft(iTrial)==1 && BpodSystem.Data.Custom.Rewarded(iTrial))
         drawL = true;
     end
