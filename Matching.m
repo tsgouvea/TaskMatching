@@ -28,7 +28,10 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.VI.Style = 'checkbox';
     TaskParameters.GUI.ChoiceDeadline = 10;
     TaskParameters.GUI.MinCutoff = 50; % New waiting time as percentile of empirical distribution
-    TaskParameters.GUIPanels.General = {'Ports_LMR','ITI','VI','ChoiceDeadline','MinCutoff'};
+    TaskParameters.GUI.CatchUnrwd = false; % random ITI
+    TaskParameters.GUIMeta.CatchUnrwd.Style = 'checkbox';
+    TaskParameters.GUIPanels.General = {'Ports_LMR','ITI','VI','ChoiceDeadline','MinCutoff','CatchUnrwd'};
+    
     % Side Ports ("waiting for feedback")
     TaskParameters.GUI.EarlySoutPenalty = 1;
     TaskParameters.GUI.FeedbackDelaySelection = 2;
@@ -41,6 +44,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.FeedbackDelay.Style = 'text';
     TaskParameters.GUI.Grace = 0.2;
     TaskParameters.GUIPanels.SidePorts = {'EarlySoutPenalty','FeedbackDelaySelection','FeedbackDelayMin','FeedbackDelayMax','FeedbackDelayTau','FeedbackDelay','Grace'};
+    
     % Reward
     TaskParameters.GUI.pHi =  50; % 0-100% Higher reward probability
     TaskParameters.GUI.pLo =  12; % 0-100% Lower reward probability
