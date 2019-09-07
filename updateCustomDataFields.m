@@ -7,7 +7,7 @@ statesThisTrial = BpodSystem.Data.RawData.OriginalStateNamesByNumber{iTrial}(Bpo
 %% Center port
 if any(strcmp('Cin',statesThisTrial))
     if any(strcmp('stillSampling',statesThisTrial))
-        BpodSystem.Data.Custom.StimDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.stillSampling(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin(1,1);
+        BpodSystem.Data.Custom.StimDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.stillSampling(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin(end,1);
     else
         BpodSystem.Data.Custom.StimDelay(iTrial) = diff(BpodSystem.Data.RawEvents.Trial{iTrial}.States.Cin);
     end
