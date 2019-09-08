@@ -32,9 +32,9 @@ end
 
 if any(strncmp('start',statesThisTrial,5))
     start_S = statesThisTrial{strncmp('start',statesThisTrial,5)};
-    if any(strcmp('EarlySout',statesThisTrial))
-        lastState = statesThisTrial{find(strcmp('EarlySout',statesThisTrial))-1}; % a grace period state
-        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(lastState)(1,1) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1); % 
+    if any(strcmp('EarlySout',statesThisTrial)|strcmp('EarlyLout',statesThisTrial)|strcmp('EarlyRout',statesThisTrial))
+        lastState = statesThisTrial{find(strcmp('EarlySout',statesThisTrial)|strcmp('EarlyLout',statesThisTrial)|strcmp('EarlyRout',statesThisTrial))-1}; % a grace period state
+        BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.(lastState)(end,1) -  BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1); %
     else
         BpodSystem.Data.Custom.FeedbackDelay(iTrial) = BpodSystem.Data.RawEvents.Trial{iTrial}.States.ITI(1,2) - BpodSystem.Data.RawEvents.Trial{iTrial}.States.(start_S)(1,1);
         if isfield(BpodSystem.Data.RawEvents.Trial{iTrial}.Events,ChoicePortOut)
